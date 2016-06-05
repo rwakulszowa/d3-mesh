@@ -16,7 +16,7 @@
   "scripts": {
     "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n d3_mesh -o build/d3-mesh.js -- index.js",
     "test": "tape 'test/**/*-test.js'",
-    "prepublish": "npm run test && uglifyjs build/d3-mesh.js -c -m -o build/d3-mesh.min.js",
+    "prepublish": "npm run test && uglifyjs build/d3-mesh.js -c -m -o build/d3-mesh.min.js && cp build/d3-mesh.js examples/d3-mesh.js",
     "postpublish": "zip -j build/d3-mesh.zip -- LICENSE README.md build/d3-mesh.js build/d3-mesh.min.js"
   },
   "devDependencies": {
