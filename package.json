@@ -1,0 +1,28 @@
+{
+  "name": "d3-mesh",
+  "version": "0.0.1",
+  "description": "Create a mesh of svg elements the d3 way",
+  "keywords": [
+    "d3", "mesh", "grid"
+  ],
+  "license": "MIT",
+  "main": "build/d3-mesh.js",
+  "jsnext:main": "index",
+  "homepage": "https://github.com/rwakulszowa/d3-mesh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rwakulszowa/d3-mesh.git"
+  },
+  "scripts": {
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n d3_mesh -o build/d3-mesh.js -- index.js",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublish": "npm run test && uglifyjs build/d3-mesh.js -c -m -o build/d3-mesh.min.js",
+    "postpublish": "zip -j build/d3-mesh.zip -- LICENSE README.md build/d3-mesh.js build/d3-mesh.min.js"
+  },
+  "devDependencies": {
+    "json2module": "0.0",
+    "rollup": "0.25",
+    "tape": "4",
+    "uglify-js": "2"
+  }
+}
