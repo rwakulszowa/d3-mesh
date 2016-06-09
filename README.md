@@ -2,6 +2,8 @@
 
 Create a mesh of SVG elements the d3 way
 
+![alt tag](https://cloud.githubusercontent.com/assets/10756296/15933899/de013c76-2e61-11e6-88ad-3d0fef83af32.png)
+
 ## Installing
 
 If you use NPM, `npm install d3-mesh`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-mesh/releases/latest).
@@ -11,7 +13,7 @@ which you can probably copy-paste into your script.
 
 ## API Reference
 
-<a href="#d3_mesh" name="d3_mesh">#</a> <i>d3</t>.<b>mesh</b>()
+<a href="#d3_mesh" name="d3_mesh">#</a> <i>d3</i>.<b>mesh</b>()
 
 Constructs a new mesh with default values.
 
