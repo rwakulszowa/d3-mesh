@@ -7,18 +7,13 @@ export default function() {
   //TODO: provide some useful interpolators out of the box
 
   function mesh(indices) {
-    return indices.map(
-      function(el, i) {
-        // map each index to a pair (index, index+1) scaled to range [0, 1]
-        return [ +el / divs[i], ( +el + 1) / divs[i] ];
-      }
-    ).reduce(
-      function(obj, val, i) {
-        // convert to an object {d0: [start, end], d1:[start, end], dn...}
-        obj["d" + i] = val.map(function(el) { return dims[i](el); });
-        return obj;
-      }, {}
-    );
+    var ans = {};
+    var starts = interpolate(indices.map(function(el, i) { return +el / divs[i]; }));
+    var ends = interpolate(indices.map(function(el, i) { return (+el + 1) / divs[i]; }));
+    for (var i in starts) {
+      ans['d' + i] = [starts[i], ends[i]]
+    }
+    return ans;
   }
 
   function interpolate(args) {

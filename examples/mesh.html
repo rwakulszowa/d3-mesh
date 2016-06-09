@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-.cell {
-  fill: mediumaquamarine;
-}
 </style>
 <body>
 <script src="https://d3js.org/d3.v3.min.js"></script>
@@ -21,29 +18,47 @@ var svg = d3.select("body").append("svg")
 var plot = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var x = d3.scale.linear().range([0, width]).domain([0,1]);
-var y = d3.interpolate(0, height);
+var color = d3.scale.linear()
+    .domain([0, 1])
+    .range(["black", "white"]);
+
+var radius = d3.scale.linear().range([0, height / 2]).domain([0,1]);
+var radius = function(x) { return 240 * Math.pow(x, 2); };
+var arc = d3.interpolate(0 * Math.PI, 2 * Math.PI);
 
 var mesh = d3_mesh.mesh()
-    .dims([x,y])
-    .divs([4,4]);
+    .dims([radius, arc])
+    .divs([32, 32]);
+
+function arcCell(radius, angle) {
+    var arc = d3.svg.arc()
+        .innerRadius(radius[0])
+        .outerRadius(radius[1])
+        .startAngle(angle[0])
+        .endAngle(angle[1]);
+    return arc();
+}
 
 d3.json("./table.json", function(error, data) {
   if (error) throw error;
 
   var cells = [];
-  for (var i of [0,1,2,3]) {
-      cells.push(mesh([i, i]));
+  for (var i=0; i < 32; ++i) {
+      for (var j = 0; j < 32; ++j) {
+        cells.push({
+          cell: mesh([i, j]),
+          color: (i + j) % 2
+        })
+      }
   }
 
   plot.selectAll(".cell")
       .data(cells)
-    .enter().append("rect")
+    .enter().append("path")
       .attr("class", "cell")
-      .attr("x", function(d) { return d.d0[0]; })
-      .attr("y", function(d) { return d.d1[0]; })
-      .attr("width", function(d) { return d.d0[1] - d.d0[0]; })
-      .attr("height", function(d) { return d.d1[1] - d.d1[0]; });
+      .attr("d", function(d) { return arcCell(d.cell.d0, d.cell.d1); })
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + " )")
+      .style("fill", function(d) { return color(d.color)});
 });
 
 </script>
