@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-.box {
+.cell {
   fill: mediumaquamarine;
-}
-.box {
-  max-height: 100%;
-  max-width: 100%;
 }
 </style>
 <body>
@@ -30,14 +26,24 @@ var y = d3.interpolate(0, height);
 
 var mesh = d3_mesh.mesh()
     .dims([x,y])
-    .divs([4,44]);
+    .divs([4,4]);
 
 d3.json("./table.json", function(error, data) {
   if (error) throw error;
 
-  for (var i in [0,1,2]) {
-    console.log(mesh([i, i]));
+  var cells = [];
+  for (var i of [0,1,2,3]) {
+      cells.push(mesh([i, i]));
   }
+
+  plot.selectAll(".cell")
+      .data(cells)
+    .enter().append("rect")
+      .attr("class", "cell")
+      .attr("x", function(d) { return d.d0[0]; })
+      .attr("y", function(d) { return d.d1[0]; })
+      .attr("width", function(d) { return d.d0[1] - d.d0[0]; })
+      .attr("height", function(d) { return d.d1[1] - d.d1[0]; });
 });
 
 </script>
