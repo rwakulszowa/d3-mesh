@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+</style>
+<body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="d3-mesh.js"></script>
+<script>
+
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+var plot = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Feel free to change the color domain / range
+var color = d3.scale.linear()
+    .domain([0, 1])
+    .range(["purple", "white"]);
+
+// Any callable accepting values [0, 1] will do.
+// If you want a full circle, make sure arc covers range [0, 2 * Pi], (or equivalent)
+var arc = d3.interpolate(0 * Math.PI, 2 * Math.PI);
+var radius = function(x) { return height / 2 * Math.pow(x, 2); };
+
+// Number of divisions per each dimension - feel free to increase the numbers
+var d1 = 24,  // circles
+    d2 = 2;  // cells per circle
+
+var mesh = d3_mesh.mesh()
+    .dims([radius, arc])
+    .divs([d1, d2]);
+
+function arcCell(radius, angle) {
+    var arc = d3.svg.arc()
+        .innerRadius(radius[0])
+        .outerRadius(radius[1])
+        .startAngle(angle[0])
+        .endAngle(angle[1]);
+    return arc();
+}
+
+d3.json("./table.json", function(error, data) {
+  if (error) throw error;
+
+  var circles = [];
+  for (var i=0; i < d1; ++i) {
+      var cells = [];
+      for (var j = 0; j < d2; ++j) {
+        cells.push({
+          cell: mesh([i, j]),
+          color: (i / j) | 0  // a fancy function returning asymmetric color distribution
+          // color: (i + j) % 2  // use this one for a classic chessboard
+        })
+      }
+      circles.push(cells);
+  }
+
+  var circlesG = plot.selectAll(".circle")
+      .data(circles)
+    .enter().append("g")
+      .attr("class", "circle")
+      .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
+
+  var cellsG = circlesG.selectAll(".cell")
+      .data(function(d) { return d; })
+    .enter().append("path")
+      .attr("class", "cell")
+      .attr("d", function(d) { return arcCell(d.cell.d0, d.cell.d1); })
+      .style("fill", function(d) { return color(d.color)})
+      .style("stroke", function(d) { return color(d.color)});
+
+  var duration = 9000;
+  (function rotate() {
+      var deg = (Math.random() - 0.5) * 25;
+      circlesG
+        .transition()
+          .duration(duration)
+          .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")rotate(" + deg * i + ")"; })
+        setTimeout(rotate, duration);
+  })();
+});
+
+</script>
