@@ -53,7 +53,7 @@ d3.json("./table.json", function(error, data) {
       var cells = [];
       for (var j = 0; j < d2; ++j) {
         cells.push({
-          cell: mesh([i, j]),
+          cell: mesh.get([i, j]),
           color: (i / j) | 0  // a fancy function returning asymmetric color distribution
           // color: (i + j) % 2  // use this one for a classic chessboard
         })
@@ -72,8 +72,8 @@ d3.json("./table.json", function(error, data) {
     .enter().append("path")
       .attr("class", "cell")
       .attr("d", function(d) { return arcCell(d.cell.d0, d.cell.d1); })
-      .style("fill", function(d) { return color(d.color)})
-      .style("stroke", function(d) { return color(d.color)});
+      .style("fill", function(d) { return color(d.color); })
+      .style("stroke", function(d) { return color(d.color); });
 
   var duration = 9000;
   (function rotate() {

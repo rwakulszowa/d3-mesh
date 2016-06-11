@@ -8,11 +8,13 @@
     var dims,
         divs;
 
-    //TODO: cell.js, node.js?
-    //TODO: 3 results: interpolate(relX, relY, ...) -> array of interpolated dims, mesh(dims) -> N-D array of cells / callable?, cover(context, data) -> selection of {data, d1, d2, dx...}
-    //TODO: provide some useful interpolators out of the box
+    function mesh(whatever) {
+      //TODO: n-D array of cells, somehow bind data / subcells with data
+      //TODO: submesh / keep parent cell in a variable / keep child cells in a variable
+      //TODO: keep the data structure
+    }
 
-    function mesh(indices) {
+    function get(indices) {
       var ans = {};
       var starts = interpolate(indices.map(function(el, i) { return +el / divs[i]; }));
       var ends = interpolate(indices.map(function(el, i) { return (+el + 1) / divs[i]; }));
@@ -44,6 +46,7 @@
       ) : divs;
     };
 
+    mesh.get = get;
     mesh.interpolate = interpolate;
 
     return mesh;
