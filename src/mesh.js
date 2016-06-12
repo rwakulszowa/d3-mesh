@@ -2,18 +2,29 @@ export default function() {
   var dims,
       divs;
 
-  function mesh(whatever) {
-    //TODO: n-D array of cells, somehow bind data / subcells with data
-    //TODO: submesh / keep parent cell in a variable / keep child cells in a variable
-    //TODO: keep the data structure
+  //TODO: a fancy getter: no args -> whole mesh, some args -> filtered rows or sth
+  
+  function mesh(data) {
+    return _dig(data, [], dims.length);
   }
 
-  function get(indices) {
+  function _dig(data, indices, depth) {
+      if (indices.length == depth) {
+          return cell(indices, data);
+      } else {
+          return data.map(function(el, i) { return _dig(el, indices.concat(i), depth); });
+      }
+  }
+
+  function cell(indices, data) {
     var ans = {};
     var starts = interpolate(indices.map(function(el, i) { return +el / divs[i]; }));
     var ends = interpolate(indices.map(function(el, i) { return (+el + 1) / divs[i]; }));
     for (var i in starts) {
       ans['d' + i] = [starts[i], ends[i]]
+    }
+    if (data) {
+      ans['data'] = data;
     }
     return ans;
   }
@@ -40,7 +51,7 @@ export default function() {
     ) : divs;
   };
 
-  mesh.get = get;
+  mesh.cell = cell;
   mesh.interpolate = interpolate;
 
   return mesh;
