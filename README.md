@@ -17,23 +17,56 @@ which you can probably copy-paste into your script.
 
 Constructs a new mesh with default values.
 
-<a href="#mesh" name="mesh">#</a> <b>mesh</b>(indices)
+<a href="#mesh" name="mesh">#</a> <b>mesh</b>(data)
 
-Returns an object `{'d0': [start, end], 'd1': [start, end], 'dn'...}` occupying position indices[0], indices[1], indices[n]... on a mesh. Position in each dimension is calculated using formula 
+Converts a n-dimensional data array to an array of dimensions specified in *mesh*.**divs**, where each data point is converted to a cell object `{'data': d, 'd0': [start, end], 'd1': [start, end], 'dn'...}`
+start and end values are calculated as specified in *mesh*.**cell**
+```js
+var mesh = d3_mesh.mesh()
+    .divs([2, 2])
+    .dims([
+      function(x) { return 20 * x; },
+      function(x) { return 16 * x; }
+    ]);
+
+var data = [
+  [1, 2],
+  [3, 4]
+];
+
+mesh(data);  /*
+[
+  [
+    {'d0': [0, 10], 'd1': [0, 8], 'data': 1},
+    {'d0': [0, 10], 'd1': [8, 16], 'data': 2},
+  ],
+  [
+    {'d0': [10, 20], 'd1': [0, 8], 'data': 3},
+    {'d0': [10, 20], 'd1': [8, 16], 'data': 4}
+  ]
+]
+*/
+```
+
+<a href="#mesh_cell" name="mesh_cell">#</a> <i>mesh</i>.<b>cell</b>(indices)
+
+Returns an object `{'d0': [start, end], 'd1': [start, end], 'dn'...}` occupying position indices[0], indices[1], indices[n]... on a mesh. Position in each dimension is calculated using formula
 ```js
 [dims[n](indices[n]/divs[n]), dims[n](indices[n+1]/divs[n])
 ```
 
 ```js
-var mesh = d3.mesh()
-    .divs([4, 4])
+var mesh = d3_mesh.mesh()
+    .divs([2, 3])
     .dims([
-        function(x) { return 100 * x; },
-        function(x) { return 60 * x; }
-    ])
+      function(x) { return 20 * x; },
+      function(x) { return 15 * x; }
+    ]);
 
-mesh([0, 0]);  // {'d0': [0, 25], 'd1': [0, 15]}
-mesh([2, 3]);  // {'d0': [30, 45], 'd1': [45, 60]}
+mesh.cell([0, 1]);  // {'d0': [0, 10], 'd1': [5, 10]}
+mesh.cell([1, 1]);  // {'d0': [10, 20], 'd1': [5, 10]}
+mesh.cell([3, 3]);  // {'d0': [30, 40], 'd1': [15, 20]}
+
 ```
 It is assumed that `indices.length == dims.length`
 
@@ -44,14 +77,15 @@ If args[i] is an array, dims[i] is called on each element, resulting in a nested
 It is assumed that `args.length == dims.length`
 
 ```js
-var mesh = d3.mesh()
+var mesh = d3_mesh.mesh()
+    .divs([2, 3])
     .dims([
-        function(x) { return 100 * x; },
-        function(x) { return 60 * x; }
-    ])
+      function(x) { return 20 * x; },
+      function(x) { return 15 * x; }
+    ]);
 
-mesh.interpolate([0.5, 0.5]);  // [50, 30]
-mesh.interpolate([0.5, [0.1, 0.2]]);  // [50, [6, 12]]
+mesh.interpolate([0.5, 0.4]);  // [10, 6]
+mesh.interpolate([1.5, 2.0]);  // [30, 30]
 ```
 
 <a href="#mesh_dims" name="mesh_dims" >#</a> <i>mesh</i>.<b>dims</b>([<i>dims</i>])

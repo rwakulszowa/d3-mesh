@@ -1,9 +1,9 @@
 export default function() {
-  var dims,
-      divs;
+  var dims = [function(x) { return x; }],
+      divs = [1];
 
   //TODO: a fancy getter: no args -> whole mesh, some args -> filtered rows or sth
-  
+
   function mesh(data) {
     return _dig(data, [], dims.length);
   }
