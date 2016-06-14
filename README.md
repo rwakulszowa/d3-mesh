@@ -8,7 +8,7 @@ Create a mesh of SVG elements the d3 way
 
 If you use NPM, `npm install d3-mesh`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-mesh/releases/latest).
 If you are super lazy, I also keep the non-minified source in
-`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.0.1/examples/d3-mesh.js`
+`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.0.2/examples/d3-mesh.js`
 which you can probably copy-paste into your script.
 
 ## API Reference
