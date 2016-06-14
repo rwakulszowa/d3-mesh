@@ -90,11 +90,15 @@ mesh.interpolate([1.5, 2.0]);  // [30, 30]
 
 <a href="#mesh_dims" name="mesh_dims" >#</a> <i>mesh</i>.<b>dims</b>([<i>dims</i>])
 
+Dims stands for dimensions - a set of callables that define the shape of a mesh.
+
 If *dims* is specified, sets the mesh’s dims to the specified array of values. The elements in the array may be any callables that accept numbers within range [0.0, 1.0] - d3.interpolate, d3.scale, or any other function. Note that depending on the way you use mesh, divs may be called with arguments outside the [0, 1] range, though if you are not planning to do any weird stuff with mesh, that won't happen.
 If *dims* is not specified, returns the mesh’s current dims.
 The default value is ``[function(x) { return x; }]``
 
 <a href="#mesh_divs" name="mesh_divs" >#</a> <i>mesh</i>.<b>divs</b>([<i>divs</i>])
+
+Divs stands for divisions - number of cells contained in each dimension.
 
 If *divs* is specified, sets the mesh’s divs to the specified array of values. The elements in the array must be positive integers.
 If *divs* is not specified, returns the mesh’s current divs.

@@ -1,9 +1,9 @@
 {
   "name": "d3-mesh",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Create a mesh of svg elements the d3 way",
   "keywords": [
-    "d3", "mesh", "grid"
+    "d3", "mesh", "grid", "table"
   ],
   "license": "MIT",
   "main": "build/d3-mesh.js",
@@ -18,9 +18,6 @@
     "test": "tape 'test/**/*-test.js'",
     "prepublish": "npm run test && uglifyjs build/d3-mesh.js -c -m -o build/d3-mesh.min.js && cp build/d3-mesh.js examples/d3-mesh.js",
     "postpublish": "zip -j build/d3-mesh.zip -- LICENSE README.md build/d3-mesh.js build/d3-mesh.min.js"
-  },
-  "dependencies": {
-    "d3-scale": "0.7"
   },
   "devDependencies": {
     "json2module": "0.0",
