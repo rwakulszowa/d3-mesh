@@ -23,7 +23,7 @@ export default function() {
     for (var i in starts) {
       ans['d' + i] = [starts[i], ends[i]]
     }
-    if (data) {
+    if (typeof data != undefined) {
       ans['data'] = data;
     }
     return ans;

@@ -48,21 +48,22 @@ function arcCell(radius, angle) {
 d3.json("./table.json", function(error, data) {
   if (error) throw error;
 
-  var circles = [];
+  var data = [];
   for (var i=0; i < d1; ++i) {
-      var cells = [];
+      var row = [];
       for (var j = 0; j < d2; ++j) {
-        cells.push({
-          cell: mesh.cell([i, j]),
-          color: (i / j) | 0  // a fancy function returning asymmetric color distribution
-          // color: (i + j) % 2  // use this one for a classic chessboard
-        })
+        row.push(
+          (i / j) | 0  // a fancy function returning asymmetric color distribution
+          // (i + j) % 2  // use this one for a classic chessboard
+        )
       }
-      circles.push(cells);
+      data.push(row);
   }
 
+  var cells = mesh(data);
+
   var circlesG = plot.selectAll(".circle")
-      .data(circles)
+      .data(cells)
     .enter().append("g")
       .attr("class", "circle")
       .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
@@ -71,9 +72,9 @@ d3.json("./table.json", function(error, data) {
       .data(function(d) { return d; })
     .enter().append("path")
       .attr("class", "cell")
-      .attr("d", function(d) { return arcCell(d.cell.d0, d.cell.d1); })
-      .style("fill", function(d) { return color(d.color); })
-      .style("stroke", function(d) { return color(d.color); });
+      .attr("d", function(d) { return arcCell(d.d0, d.d1); })
+      .style("fill", function(d) { return color(d.data); })
+      .style("stroke", function(d) { return color(d.data); });
 
   var duration = 9000;
   (function rotate() {
