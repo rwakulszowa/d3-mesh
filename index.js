@@ -1,1 +1,1 @@
-export {default as mesh} from "./src/mesh";
+export {default as grid} from "./src/grid";

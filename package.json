@@ -1,23 +1,23 @@
 {
-  "name": "d3-mesh",
-  "version": "0.0.2",
-  "description": "Create a mesh of svg elements the d3 way",
+  "name": "d3-grid",
+  "version": "0.0.3",
+  "description": "Create a grid of elements the d3 way",
   "keywords": [
-    "d3", "mesh", "grid", "table"
+    "d3", "grid", "table"
   ],
   "license": "MIT",
-  "main": "build/d3-mesh.js",
+  "main": "build/d3-grid.js",
   "jsnext:main": "index",
-  "homepage": "https://github.com/rwakulszowa/d3-mesh",
+  "homepage": "https://github.com/rwakulszowa/d3-grid",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rwakulszowa/d3-mesh.git"
+    "url": "https://github.com/rwakulszowa/d3-grid.git"
   },
   "scripts": {
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -g d3-scale:d3_scale -f umd -n d3_mesh -o build/d3-mesh.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n d3_grid -o build/d3-grid.js -- index.js",
     "test": "tape 'test/**/*-test.js'",
-    "prepublish": "npm run test && uglifyjs build/d3-mesh.js -c -m -o build/d3-mesh.min.js && cp build/d3-mesh.js examples/d3-mesh.js",
-    "postpublish": "zip -j build/d3-mesh.zip -- LICENSE README.md build/d3-mesh.js build/d3-mesh.min.js"
+    "prepublish": "npm run test && uglifyjs build/d3-grid.js -c -m -o build/d3-grid.min.js && cp build/d3-grid.js examples/d3-grid.js",
+    "postpublish": "zip -j build/d3-grid.zip -- LICENSE README.md build/d3-grid.js build/d3-grid.min.js"
   },
   "devDependencies": {
     "json2module": "0.0",
