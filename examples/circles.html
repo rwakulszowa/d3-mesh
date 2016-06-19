@@ -4,7 +4,7 @@
 </style>
 <body>
 <script src="https://d3js.org/d3.v3.min.js"></script>
-<script src="d3-mesh.js"></script>
+<script src="d3-grid.js"></script>
 <script>
 
 var margin = {top: 20, right: 30, bottom: 30, left: 40},
@@ -32,9 +32,9 @@ var radius = function(x) { return height / 2 * Math.pow(x, 2); };
 var d1 = 24,  // circles
     d2 = 2;  // cells per circle
 
-var mesh = d3_mesh.mesh()
-    .dims([radius, arc])
-    .divs([d1, d2]);
+var grid = d3_grid.grid()
+    .nodes([radius, arc])
+    .dims([d1, d2]);
 
 function arcCell(radius, angle) {
     var arc = d3.svg.arc()
@@ -57,30 +57,31 @@ for (var i=0; i < d1; ++i) {
     data.push(row);
 }
 
-var cells = mesh(data);
-
-var circlesG = plot.selectAll(".circle")
-    .data(cells)
-  .enter().append("g")
-    .attr("class", "circle")
-    .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
-
-var cellsG = circlesG.selectAll(".cell")
-    .data(function(d) { return d; })
-  .enter().append("path")
-    .attr("class", "cell")
-    .attr("d", function(d) { return arcCell(d.d0, d.d1); })
-    .style("fill", function(d) { return color(d.data); })
-    .style("stroke", function(d) { return color(d.data); });
-
-var duration = 9000;
-(function rotate() {
-    var deg = (Math.random() - 0.5) * 25;
-    circlesG
-      .transition()
-        .duration(duration)
-        .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")rotate(" + deg * i + ")"; })
-      setTimeout(rotate, duration);
-})();
+console.log(data);
+var cells = grid(data);
+console.log(cells);
+// var circlesG = plot.selectAll(".circle")
+//     .data(cells)
+//   .enter().append("g")
+//     .attr("class", "circle")
+//     .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
+//
+// var cellsG = circlesG.selectAll(".cell")
+//     .data(function(d) { return d; })
+//   .enter().append("path")
+//     .attr("class", "cell")
+//     .attr("d", function(d) { return arcCell(d.d0, d.d1); })
+//     .style("fill", function(d) { return color(d.data); })
+//     .style("stroke", function(d) { return color(d.data); });
+//
+// var duration = 9000;
+// (function rotate() {
+//     var deg = (Math.random() - 0.5) * 25;
+//     circlesG
+//       .transition()
+//         .duration(duration)
+//         .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")rotate(" + deg * i + ")"; })
+//       setTimeout(rotate, duration);
+// })();
 
 </script>

@@ -5,31 +5,31 @@
 }(this, function (exports) { 'use strict';
 
   function grid() {
-        dims = [1],
-        nodes = [function(x) { return x; }];
+    var dims = [1],  // grid dimensions
+        nodes = [function(x) { return x; }];  // start- and endpoints for each cell; an array of arrays or functions
 
-    //TODO: a fancy getter: no args -> whole mesh, some args -> filtered rows or sth
-    //TODO: utils for irregular grids (merged cells)
+    //TODO: utils for irregular grids (merged cells) - empty array cells? - map omits them
     //TODO: utils for easy resizing - array of keypoints? (regular divisions by default, allow resizing)
-    //TODO: keep a full grid internally, return a flat selection (easy management of merged cells)
 
-    function grid(data) {
+    //TODO: cell.js, dimension.js -> grid is just a set of dimensions with no order (treat each dimension the same)
+    //NOTE: dimension animations can be handled by moving passing / shuffling data
+    //NOTE: data structure will always be the same / regular
 
-    }
-
-    function cell(indices, data) {
-      var ans = {};
-      return ans;
-    }
+    function grid(data) {}
 
     grid.dims = function(_) {
       return arguments.length ? (
         dims = _,
-        mesh
+        grid
       ) : dims;
     };
 
-    grid.cell = cell;
+    grid.nodes = function(_) {
+      return arguments.length ? (
+        nodes = _,
+        grid
+      ) : nodes;
+    };
 
     return grid;
   };
