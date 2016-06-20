@@ -1,7 +1,7 @@
 var tape = require("tape"),
-    d3_grid = require("../");
+    grid = require("../");
 
 tape("todo", function(test) {
-  
+
   test.end();
 });

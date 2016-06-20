@@ -8,6 +8,7 @@ export default function() {
   //TODO: cell.js, dimension.js -> grid is just a set of dimensions with no order (treat each dimension the same)
   //NOTE: dimension animations can be handled by moving passing / shuffling data
   //NOTE: data structure will always be the same / regular
+  //TODO: multiple getters: flat, grouped by each dimension
 
   function grid(data) {}
 
