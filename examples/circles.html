@@ -33,8 +33,8 @@ var d1 = 24,  // circles
     d2 = 2;  // cells per circle
 
 var grid = d3_grid.grid()
-    .nodes([radius, arc])
-    .dims([d1, d2]);
+    .dims([new d3_grid.Dimension(d1, function(x) { return x ** 2; } ),
+           new d3_grid.Dimension(d2, [0, 0.5, 1.0])]);
 
 function arcCell(radius, angle) {
     var arc = d3.svg.arc()

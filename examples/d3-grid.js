@@ -4,8 +4,22 @@
   (factory((global.d3_grid = global.d3_grid || {})));
 }(this, function (exports) { 'use strict';
 
+  function Cell(nodes, data) {
+    for (var i in nodes) {
+      var n = nodes[i];
+      if (n != undefined && n != null) {
+        this['d' + i] = n;
+      }
+    }
+    this['data'] = data;
+  }
+
+  Cell.prototype = {
+    constructor: Cell
+  };
+
   function Dimension(divs, nodes) {
-    if (typeof nodes != "function" && nodes.length != divs + 1) {
+    if (typeof nodes != "function" && nodes.length != divs + 1) {  //TODO: if nodes is an array, skip divs argument
       throw "Nodes must be a callable or an array of length divs + 1"
     }
     this.divs = divs;
@@ -32,8 +46,7 @@
   }
 
   function grid() {
-    var dims = [1],  // grid dimensions
-        nodes = [function(x) { return x; }];  // start- and endpoints for each cell; an array of arrays or functions
+    var dims = [];
 
     //TODO: utils for irregular grids (merged cells) - empty array cells? - map omits them
     //TODO: utils for easy resizing - array of keypoints? (regular divisions by default, allow resizing)
@@ -43,7 +56,21 @@
     //NOTE: data structure will always be the same / regular
     //TODO: multiple getters: flat, grouped by each dimension
 
-    function grid(data) {}
+    function grid(data) {
+      return _dig(data, [], dims.length);
+    }
+
+    function _dig(data, nodes, depth) {
+      console.log(nodes, depth);
+      if (nodes.length == depth) {
+        return new Cell(nodes, data);
+      } else {
+        var nextNodes = dims[nodes.length].getNodes();
+        return data.map(function(el, i) {
+          return _dig(el, nodes.concat( {'a': nextNodes[i], 'b': nextNodes[i+1] } ), depth);
+        });
+      }
+    }
 
     grid.dims = function(_) {
       return arguments.length ? (
@@ -52,31 +79,11 @@
       ) : dims;
     };
 
-    grid.nodes = function(_) {
-      return arguments.length ? (
-        nodes = _,
-        grid
-      ) : nodes;
-    };
-
     return grid;
   };
 
-  function Cell(nodes) {
-    for (var i in nodes) {
-      var n = nodes[i];
-      if (n != undefined && n != null) {
-        this['d' + i] = n;
-      }
-    }
-  }
-
-  Cell.prototype = {
-    constructor: Cell
-  };
-
-  exports.dimension = Dimension;
-  exports.Grid = grid;
+  exports.grid = grid;
+  exports.Dimension = Dimension;
   exports.Cell = Cell;
 
 }));

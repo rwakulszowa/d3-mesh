@@ -1,5 +1,5 @@
 export default function Dimension(divs, nodes) {
-  if (typeof nodes != "function" && nodes.length != divs + 1) {
+  if (typeof nodes != "function" && nodes.length != divs + 1) {  //TODO: if nodes is an array, skip divs argument
     throw "Nodes must be a callable or an array of length divs + 1"
   }
   this.divs = divs;
