@@ -25,23 +25,23 @@ var color = d3.scale.linear()
 
 // Any callable accepting values [0, 1] will do.
 // If you want a full circle, make sure arc covers range [0, 2 * Pi], (or equivalent)
-var arc = d3.interpolate(0 * Math.PI, 2 * Math.PI);
-var radius = function(x) { return height / 2 * Math.pow(x, 2); };
+var arcF = d3.interpolate(0 * Math.PI, 2 * Math.PI);
+var radiusF = function(x) { return height / 2 * Math.pow(x, 2); };
 
 // Number of divisions per each dimension - feel free to increase the numbers
 var d1 = 24,  // circles
     d2 = 2;  // cells per circle
 
 var grid = d3_grid.grid()
-    .dims([new d3_grid.Dimension(d1, function(x) { return x ** 2; } ),
+    .dims([new d3_grid.Dimension(d1, function(x) { return x; } ),
            new d3_grid.Dimension(d2, [0, 0.5, 1.0])]);
 
 function arcCell(radius, angle) {
     var arc = d3.svg.arc()
-        .innerRadius(radius[0])
-        .outerRadius(radius[1])
-        .startAngle(angle[0])
-        .endAngle(angle[1]);
+        .innerRadius(radiusF(radius.a))
+        .outerRadius(radiusF(radius.b))
+        .startAngle(arcF(angle.a))
+        .endAngle(arcF(angle.b));
     return arc();
 }
 
@@ -57,31 +57,29 @@ for (var i=0; i < d1; ++i) {
     data.push(row);
 }
 
-console.log(data);
 var cells = grid(data);
-console.log(cells);
-// var circlesG = plot.selectAll(".circle")
-//     .data(cells)
-//   .enter().append("g")
-//     .attr("class", "circle")
-//     .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
-//
-// var cellsG = circlesG.selectAll(".cell")
-//     .data(function(d) { return d; })
-//   .enter().append("path")
-//     .attr("class", "cell")
-//     .attr("d", function(d) { return arcCell(d.d0, d.d1); })
-//     .style("fill", function(d) { return color(d.data); })
-//     .style("stroke", function(d) { return color(d.data); });
-//
-// var duration = 9000;
-// (function rotate() {
-//     var deg = (Math.random() - 0.5) * 25;
-//     circlesG
-//       .transition()
-//         .duration(duration)
-//         .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")rotate(" + deg * i + ")"; })
-//       setTimeout(rotate, duration);
-// })();
+var circlesG = plot.selectAll(".circle")
+    .data(cells)
+  .enter().append("g")
+    .attr("class", "circle")
+    .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
+
+var cellsG = circlesG.selectAll(".cell")
+    .data(function(d) { return d; })
+  .enter().append("path")
+    .attr("class", "cell")
+    .attr("d", function(d) { return arcCell(d.d0, d.d1); })
+    .style("fill", function(d) { return color(d.data); })
+    .style("stroke", function(d) { return color(d.data); });
+
+var duration = 9000;
+(function rotate() {
+    var deg = (Math.random() - 0.5) * 25;
+    circlesG
+      .transition()
+        .duration(duration)
+        .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")rotate(" + deg * i + ")"; })
+      setTimeout(rotate, duration);
+})();
 
 </script>

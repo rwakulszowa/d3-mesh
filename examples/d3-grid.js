@@ -61,7 +61,6 @@
     }
 
     function _dig(data, nodes, depth) {
-      console.log(nodes, depth);
       if (nodes.length == depth) {
         return new Cell(nodes, data);
       } else {
