@@ -8,8 +8,8 @@ tape("Grid binds data correctly", function(test) {
   ];
   var g = grid.grid()
       .dims([
-        new grid.Dimension(2, function(x) { return x; }),
-        new grid.Dimension(3, function(x) { return x; })
+        grid.dimension(function(x) { return x; }, 2),
+        grid.dimension(function(x) { return x; }, 3)
       ]);
   test.same(g(data), [
     [

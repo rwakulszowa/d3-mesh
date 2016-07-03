@@ -1,26 +1,32 @@
-export default function Dimension(divs, nodes) {
-  if (typeof nodes != "function" && nodes.length != divs + 1) {  //TODO: if nodes is an array, skip divs argument
-    throw "Nodes must be a callable or an array of length divs + 1"
-  }
-  this.divs = divs;
-  this.nodes = nodes;
+export default function dimension(nodes, divs) {
+  return new Dimension(nodes, divs);
 }
+
+function Dimension(nodes, divs) {
+  this.nodes = nodes;
+  if (Array.isArray(nodes)) {
+    this.divs = nodes.length - 1;
+  } else if (typeof nodes == "function" && divs != undefined) {
+    this.divs = divs;
+    this.compute();
+  } else {
+    throw "Bad arguments";
+  }
+  this.normalize();
+};
 
 Dimension.prototype = {
   constructor: Dimension,
 
-  getNodes: function() {
-    var nodes = typeof this.nodes == "function" ? (
-      _computeNodes(this)
-    ) : this.nodes;
-    var max = Math.max.apply(null, nodes);
-    for (var i in nodes) { nodes[i] /= max; };
-    return nodes;
-  }
-};
+  compute: function() {
+    var temp = new Array(this.divs + 1);
+    for (var i=0; i < temp.length; ++i) { temp[i] = this.nodes(i / this.divs); };
+    this.nodes = temp;
+  },
 
-function _computeNodes(d) {
-  var temp = new Array(d.divs + 1);
-  for (var i=0; i < temp.length; ++i) { temp[i] = d.nodes(i / d.divs); };
-  return temp;
-}
+  normalize: function() {
+   var max = Math.max.apply(null, this.nodes);
+   for (var i in this.nodes) { this.nodes[i] /= max; };
+  }
+
+};

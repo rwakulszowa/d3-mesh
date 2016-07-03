@@ -1,5 +1,5 @@
 import Cell from "./cell";
-import Dimension from "./dimension";
+import dimension from "./dimension";
 
 export default function() {
   var dims = [];
@@ -9,7 +9,6 @@ export default function() {
   //NOTE: dimension animations can be handled by moving passing / shuffling data
   //NOTE: data structure will always be the same / regular
   //TODO: multiple getters: flat, grouped by each dimension
-  //TODO: dimension - get single element by index
   //TODO: expand method (from 0-1 domain to domain provided by user)
 
   function grid(data) {
@@ -20,7 +19,7 @@ export default function() {
     if (nodes.length == depth) {
       return new Cell(nodes, data);
     } else {
-      var nextNodes = dims[nodes.length].getNodes();
+      var nextNodes = dims[nodes.length].nodes;
       return data.map(function(el, i) {
         return _dig(el, nodes.concat( {'a': nextNodes[i], 'b': nextNodes[i+1] } ), depth);
       });

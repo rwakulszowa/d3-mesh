@@ -18,43 +18,49 @@
     constructor: Cell
   };
 
-  function Dimension(divs, nodes) {
-    if (typeof nodes != "function" && nodes.length != divs + 1) {  //TODO: if nodes is an array, skip divs argument
-      throw "Nodes must be a callable or an array of length divs + 1"
-    }
-    this.divs = divs;
-    this.nodes = nodes;
+  function dimension(nodes, divs) {
+    return new Dimension(nodes, divs);
   }
+
+  function Dimension(nodes, divs) {
+    this.nodes = nodes;
+    if (Array.isArray(nodes)) {
+      this.divs = nodes.length - 1;
+    } else if (typeof nodes == "function" && divs != undefined) {
+      this.divs = divs;
+      this.compute();
+    } else {
+      throw "Bad arguments";
+    }
+    this.normalize();
+  };
 
   Dimension.prototype = {
     constructor: Dimension,
 
-    getNodes: function() {
-      var nodes = typeof this.nodes == "function" ? (
-        _computeNodes(this)
-      ) : this.nodes;
-      var max = Math.max.apply(null, nodes);
-      for (var i in nodes) { nodes[i] /= max; };
-      return nodes;
-    }
-  };
+    compute: function() {
+      var temp = new Array(this.divs + 1);
+      for (var i=0; i < temp.length; ++i) { temp[i] = this.nodes(i / this.divs); };
+      this.nodes = temp;
+    },
 
-  function _computeNodes(d) {
-    var temp = new Array(d.divs + 1);
-    for (var i=0; i < temp.length; ++i) { temp[i] = d.nodes(i / d.divs); };
-    return temp;
-  }
+    normalize: function() {
+     var max = Math.max.apply(null, this.nodes);
+     for (var i in this.nodes) { this.nodes[i] /= max; };
+    }
+
+  };
 
   function grid() {
     var dims = [];
 
     //TODO: utils for irregular grids (merged cells) - empty array cells? - map omits them
-    //TODO: utils for easy resizing - array of keypoints? (regular divisions by default, allow resizing)
 
-    //TODO: cell.js, dimension.js -> grid is just a set of dimensions with no order (treat each dimension the same)
     //NOTE: dimension animations can be handled by moving passing / shuffling data
     //NOTE: data structure will always be the same / regular
     //TODO: multiple getters: flat, grouped by each dimension
+    //TODO: dimension - get single element by index
+    //TODO: expand method (from 0-1 domain to domain provided by user)
 
     function grid(data) {
       return _dig(data, [], dims.length);
@@ -64,7 +70,7 @@
       if (nodes.length == depth) {
         return new Cell(nodes, data);
       } else {
-        var nextNodes = dims[nodes.length].getNodes();
+        var nextNodes = dims[nodes.length].nodes;
         return data.map(function(el, i) {
           return _dig(el, nodes.concat( {'a': nextNodes[i], 'b': nextNodes[i+1] } ), depth);
         });
@@ -82,7 +88,7 @@
   };
 
   exports.grid = grid;
-  exports.Dimension = Dimension;
+  exports.dimension = dimension;
   exports.Cell = Cell;
 
 }));
