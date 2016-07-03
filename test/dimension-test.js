@@ -17,3 +17,17 @@ tape("Dimension constructor calls and normalizes a function", function(test) {
   test.same(dim.nodes, [0, 0.5, 1]);
   test.end();
 });
+
+tape("Dimension domain() sets and gets", function(test) {
+  var dim = grid.dimension([0, 0.5, 1])
+      .domain([0, 100]);
+  test.same(dim.domain(), [0, 100]);
+  test.end();
+});
+
+tape("Dimension domain() expands nodes", function(test) {
+  var dim = grid.dimension([0, 0.25, 0.5, 1])
+      .domain([0, 100]);
+  test.same(dim.nodes, [0, 25, 50, 100]);
+  test.end();
+});

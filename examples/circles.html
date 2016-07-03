@@ -23,25 +23,22 @@ var color = d3.scale.linear()
     .domain([0, 1])
     .range(["purple", "white"]);
 
-// Any callable accepting values [0, 1] will do.
-// If you want a full circle, make sure arc covers range [0, 2 * Pi], (or equivalent)
-var arcF = d3.interpolate(0 * Math.PI, 2 * Math.PI);
-var radiusF = function(x) { return height / 2 * Math.pow(x, 2); };
-
 // Number of divisions per each dimension - feel free to increase the numbers
 var d1 = 24,  // circles
     d2 = 2;  // cells per circle
 
 var grid = d3_grid.grid()
-    .dims([d3_grid.dimension(function(x) { return x; }, d1),
-           d3_grid.dimension([0, 0.5, 1.0])]);
+    .dims([d3_grid.dimension(function(x) { return Math.pow(x, 2); }, d1)
+                  .domain([0, height / 2]),
+           d3_grid.dimension(function(x) { return x; }, d2)
+                  .domain([0, 2 * Math.PI])]);  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
 
 function arcCell(radius, angle) {
     var arc = d3.svg.arc()
-        .innerRadius(radiusF(radius.a))
-        .outerRadius(radiusF(radius.b))
-        .startAngle(arcF(angle.a))
-        .endAngle(arcF(angle.b));
+        .innerRadius(radius.a)
+        .outerRadius(radius.b)
+        .startAngle(angle.a)
+        .endAngle(angle.b);
     return arc();
 }
 
