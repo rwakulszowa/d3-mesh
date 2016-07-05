@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.cell rect{
+  fill: none;
+  stroke: #639;
+  stroke-width: 1.5;
+}
+.cell text {
+  font-size: 16px;
+}
+</style>
+<body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="d3-grid.js"></script>
+<script>
+
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+var table = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var data = [
+  ['key', 'value'],
+  ['a', 4],
+  ['b', 9],
+  ['c', 16],
+];
+
+var rowsCount = data.length,
+    colsCount = data[0].length;
+
+var grid = d3_grid.grid()
+    .dims([
+      d3_grid.dimension([0, 0.25, 0.5, 0.75, 1]).domain([0, height]),
+      d3_grid.dimension([0, 0.3, 1]).domain([0, width])
+    ]);
+
+var rows = table.selectAll(".row")
+    .data(grid(data))
+  .enter().append("g")
+    .attr("class", "row");
+
+var cells = rows.selectAll(".cell")
+    .data(function(d) { return d; })
+  .enter().append("g")
+    .attr("class", "cell")
+    .attr("transform", function(d) { return "translate(" + d.d1.a + "," + d.d0.a + ")"; });
+
+cells.append("rect")
+    .attr("height", function(d) { return d.d0.b - d.d0.a; })
+    .attr("width", function(d) { return d.d1.b - d.d1.a; });
+
+cells.append("text")
+    .text(function(d) { return d.data; })
+    .attr("text-anchor", "middle")
+    .attr("y", function(d) { return (d.d0.b - d.d0.a) / 2; })
+    .attr("x", function(d) { return (d.d1.b - d.d1.a) / 2; });
+</script>
