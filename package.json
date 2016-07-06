@@ -1,6 +1,6 @@
 {
   "name": "d3-grid",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Create a grid of elements the d3 way",
   "keywords": [
     "d3", "grid", "table"

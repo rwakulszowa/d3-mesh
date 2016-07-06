@@ -8,7 +8,7 @@ Create a grid of SVG elements the d3 way
 
 If you use NPM, `npm install d3-grid`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-grid/releases/latest).
 If you are super lazy, I also keep the non-minified source in
-`https://raw.githubusercontent.com/rwakulszowa/d3-grid/v0.0.3/examples/d3-grid.js`
+`https://raw.githubusercontent.com/rwakulszowa/d3-grid/v0.1.0/examples/d3-grid.js`
 which you can probably copy-paste into your script.
 
 ## API Reference

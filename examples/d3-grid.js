@@ -69,8 +69,7 @@
     //NOTE: dimension animations can be handled by moving passing / shuffling data
     //NOTE: data structure will always be the same / regular
     //TODO: multiple getters: flat, grouped by each dimension
-    //TODO: expand method (from 0-1 domain to domain provided by user)
-
+    
     function grid(data) {
       return _dig(data, [], dims.length);
     }
