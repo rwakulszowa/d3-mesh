@@ -1,105 +1,90 @@
-# d3-mesh
+# d3-grid
 
-Create a mesh of SVG elements the d3 way
+Create a grid of SVG elements the d3 way
 
-![alt tag](https://cloud.githubusercontent.com/assets/10756296/15933899/de013c76-2e61-11e6-88ad-3d0fef83af32.png)
+[A fancy example](https://cloud.githubusercontent.com/assets/10756296/15933899/de013c76-2e61-11e6-88ad-3d0fef83af32.png)
 
 ## Installing
 
-If you use NPM, `npm install d3-mesh`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-mesh/releases/latest).
+If you use NPM, `npm install d3-grid`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-grid/releases/latest).
 If you are super lazy, I also keep the non-minified source in
-`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.0.2/examples/d3-mesh.js`
+`https://raw.githubusercontent.com/rwakulszowa/d3-grid/v0.0.3/examples/d3-grid.js`
 which you can probably copy-paste into your script.
 
 ## API Reference
 
-<a href="#d3_mesh" name="d3_mesh">#</a> <i>d3</i>.<b>mesh</b>()
+<a href="#d3_grid" name="d3_grid">#</a> <i>d3</i>.<b>grid</b>()
 
-Constructs a new mesh with default values.
+Constructs a new grid with default values.
 
-<a href="#mesh" name="mesh">#</a> <b>mesh</b>(data)
+<a href="#grid" name="grid">#</a> <b>grid</b>(data)
 
-Converts a n-dimensional data array to an array of dimensions specified in *mesh*.**divs**, where each data point is converted to a cell object `{'data': d, 'd0': [start, end], 'd1': [start, end], 'dn'...}`
-start and end values are calculated as specified in *mesh*.**cell**
+Converts a n-dimensional data array to an array of dimensions specified by *grid*.**dims**, where each data point is converted to a cell object `{'data': data, 'd0': {'a': d0Start, 'b': d0End}, 'd1': {'a': d1Start, 'b': d1End}, 'dn'...}`
+start and end values are calculated as specified in *d3_grid*.**cell**
 ```js
-var mesh = d3_mesh.mesh()
-    .divs([2, 2])
+var grid = d3_grid.grid()
     .dims([
-      function(x) { return 20 * x; },
-      function(x) { return 16 * x; }
+      d3_grid.dimension([0, 0.5, 1]),
+      d3_grid.dimension([0, 0.5, 1])
     ]);
 
 var data = [
-  [1, 2],
-  [3, 4]
+  ['a', 'b'],
+  ['c', 'd']
 ];
 
-mesh(data);  /*
+grid(data);  /*
 [
   [
-    {'d0': [0, 10], 'd1': [0, 8], 'data': 1},
-    {'d0': [0, 10], 'd1': [8, 16], 'data': 2},
+    {'d0': {'a': 0, 'b': 0.5}, 'd1': {'a': 0, 'b': 0.5}, 'data': 'a'},
+    {'d0': {'a': 0, 'b': 0.5}, 'd1': {'a': 0.5, 'b': 1}, 'data': 'b'},
   ],
   [
-    {'d0': [10, 20], 'd1': [0, 8], 'data': 3},
-    {'d0': [10, 20], 'd1': [8, 16], 'data': 4}
-  ]
+    {'d0': {'a': 0.5, 'b': 1}, 'd1': {'a': 0, 'b': 0.5}, 'data': 'c'},
+    {'d0': {'a': 0.5, 'b': 1}, 'd1': {'a': 0.5, 'b': 1}, 'data': 'd'},
+  ],
 ]
 */
 ```
 
-<a href="#mesh_cell" name="mesh_cell">#</a> <i>mesh</i>.<b>cell</b>(indices)
+<a href="#grid_dims" name="grid_dims" >#</a> <i>grid</i>.<b>dims</b>([<i>dims</i>])
 
-Returns an object `{'d0': [start, end], 'd1': [start, end], 'dn'...}` occupying position indices[0], indices[1], indices[n]... on a mesh. Position in each dimension is calculated using formula
+Dims stands for dimensions - a set of arrays defining nodes of each cell (i.e. start- and endpoints).
+
+If *dims* is specified, sets the grid’s dims to the specified array of values. The elements in the array must be objects of type *d3_grid*.**Dimension**
+If *dims* is not specified, returns the grid’s current dims.
+The default value is ``[]``
+
+<a href="#grid_dimension" name="grid_dimension" >#</a> <i>d3_grid</i>.<b>dimension</b>(<i>nodes</i>[<i>, divs</i>])
+
+Constructs a new Dimension object with default *domain*.
+
+<i>d3_grid</i>.<b>dimension</b> must be called with an array of length >=1 or a function and an integer as arguments.
+If *nodes* is an array, Dimension will divide its domain into a set of `nodes.length - 1` elements of start- and endpoints as defined by *nodes* argument.
+If *nodes* is a callable, it must accept one argument - a number within range (0, 1). An array of length *divs* with start- and endpoints will be computed by passing *divs* equally divided numbers from range (0, 1) to *nodes*.
 ```js
-[dims[n](indices[n]/divs[n]), dims[n](indices[n+1]/divs[n])
+//These are equal
+var d1 = d3_grid.dimension([0, 0.5, 1]),
+    d2 = d3_grid.dimension(function(x) { return x; }, 2);
+```
+NOTE: in most non-weird cases, you want to provide a function that is [monotonic](https://en.wikipedia.org/wiki/Monotonic_function) within range (0, 1).
+
+Values provided / computed will be internally normalized, i.e. converted to fit within range (0, 1):
+```js
+//These are equal
+var d1 = d3_grid.dimension([0, 0.5, 1]),
+    d2 = d3_grid.dimension([0, 2, 4]);
 ```
 
+<a href="#grid_dimension_domain" name="grid_dimension_domain" >#</a> <i>d3_grid.dimension</i>.<b>domain</b>([<i>domain</i>])
+
+Domain is the range of values the dimension will be expanded to from range (0, 1).
 ```js
-var mesh = d3_mesh.mesh()
-    .divs([2, 3])
-    .dims([
-      function(x) { return 20 * x; },
-      function(x) { return 15 * x; }
-    ]);
-
-mesh.cell([0, 1]);  // {'d0': [0, 10], 'd1': [5, 10]}
-mesh.cell([1, 1]);  // {'d0': [10, 20], 'd1': [5, 10]}
-mesh.cell([3, 3]);  // {'d0': [30, 40], 'd1': [15, 20]}
-
-```
-It is assumed that `indices.length == dims.length`
-
-<a href="#mesh_interpolate" name="mesh_interpolate">#</a> <i>mesh</i>.<b>interpolate</b>(args)
-
-Calls dims[i] on args[i], returning an array of interpolated values.
-If args[i] is an array, dims[i] is called on each element, resulting in a nested array being returned.
-It is assumed that `args.length == dims.length`
-
-```js
-var mesh = d3_mesh.mesh()
-    .divs([2, 3])
-    .dims([
-      function(x) { return 20 * x; },
-      function(x) { return 15 * x; }
-    ]);
-
-mesh.interpolate([0.5, 0.4]);  // [10, 6]
-mesh.interpolate([1.5, 2.0]);  // [30, 30]
+var dim = grid.dimension([0, 0.25, 0.5, 1])
+    .domain([0, 100]);
+dim.nodes;  // [0, 25, 50, 100]
 ```
 
-<a href="#mesh_dims" name="mesh_dims" >#</a> <i>mesh</i>.<b>dims</b>([<i>dims</i>])
-
-Dims stands for dimensions - a set of callables that define the shape of a mesh.
-
-If *dims* is specified, sets the mesh’s dims to the specified array of values. The elements in the array may be any callables that accept numbers within range [0.0, 1.0] - d3.interpolate, d3.scale, or any other function. Note that depending on the way you use mesh, divs may be called with arguments outside the [0, 1] range, though if you are not planning to do any weird stuff with mesh, that won't happen.
-If *dims* is not specified, returns the mesh’s current dims.
-The default value is ``[function(x) { return x; }]``
-
-<a href="#mesh_divs" name="mesh_divs" >#</a> <i>mesh</i>.<b>divs</b>([<i>divs</i>])
-
-Divs stands for divisions - number of cells contained in each dimension.
-
-If *divs* is specified, sets the mesh’s divs to the specified array of values. The elements in the array must be positive integers.
-If *divs* is not specified, returns the mesh’s current divs.
-The default value is [1].
+If *domain* is specified, sets the grid’s domain to *domain*. *domain* must be a 2-element array of numbers.
+If *domain* is not specified, returns the dimension’s current domain.
+The default value is ``[0, 1]``
