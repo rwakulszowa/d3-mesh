@@ -1,15 +1,15 @@
 var tape = require("tape"),
-    grid = require("../");
+    mesh = require("../");
 
-tape("Grid binds data correctly", function(test) {
+tape("mesh binds data correctly", function(test) {
   var data = [
     ['a', 'b', 'c'],
     ['d', 'e', 'f']
   ];
-  var g = grid.grid()
+  var g = mesh.mesh()
       .dims([
-        grid.dimension(function(x) { return x; }, 2),
-        grid.dimension(function(x) { return x; }, 3)
+        mesh.dimension(function(x) { return x; }, 2),
+        mesh.dimension(function(x) { return x; }, 3)
       ]);
   test.same(g(data), [
     [

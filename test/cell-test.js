@@ -1,8 +1,8 @@
 var tape = require("tape"),
-    grid = require("../");
+    mesh = require("../");
 
 tape("Cell constructor sets correct properties", function(test) {
-  var c = new grid.Cell([
+  var c = new mesh.Cell([
     {'a': 0, 'b': 1},
     null,
     {'a': 0.5, 'b': 1.5}

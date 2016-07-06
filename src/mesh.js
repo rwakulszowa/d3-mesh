@@ -4,13 +4,13 @@ import dimension from "./dimension";
 export default function() {
   var dims = [];
 
-  //TODO: utils for irregular grids (merged cells) - empty array cells? - map omits them
+  //TODO: utils for irregular meshs (merged cells) - empty array cells? - map omits them
 
   //NOTE: dimension animations can be handled by moving passing / shuffling data
   //NOTE: data structure will always be the same / regular
   //TODO: multiple getters: flat, grouped by each dimension
   
-  function grid(data) {
+  function mesh(data) {
     return _dig(data, [], dims.length);
   }
 
@@ -25,12 +25,12 @@ export default function() {
     }
   }
 
-  grid.dims = function(_) {
+  mesh.dims = function(_) {
     return arguments.length ? (
       dims = _,
-      grid
+      mesh
     ) : dims;
   };
 
-  return grid;
+  return mesh;
 };
