@@ -28,10 +28,12 @@ var d1 = 24,  // circles
     d2 = 2;  // cells per circle
 
 var mesh = d3_mesh.mesh()
-    .dims([d3_mesh.dimension.fromFunction(function(x) { return Math.pow(x, 2); }, d1)
-                  .domain([0, height / 2]),
-           d3_mesh.dimension.fromFunction(function(x) { return x; }, d2)
-                  .domain([0, 2 * Math.PI])]);  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
+      .x(d3_mesh.dimension
+        .fromFunction(function(x) { return Math.pow(x, 2); }, d1)
+        .domain([0, height / 2]))
+      .y(d3_mesh.dimension
+        .fromFunction(function(x) { return x; }, d2)
+        .domain([0, 2 * Math.PI]));  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
 
 function arcCell(radius, angle) {
     var arc = d3.svg.arc()

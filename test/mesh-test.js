@@ -7,10 +7,8 @@ tape("mesh binds data correctly", function(test) {
     ['d', 'e', 'f']
   ];
   var g = mesh.mesh()
-      .dims([
-        mesh.dimension.fromFunction(function(x) { return x; }, 2),
-        mesh.dimension.fromFunction(function(x) { return x; }, 3)
-      ]);
+      .x(mesh.dimension.fromFunction(function(x) { return x; }, 2))
+      .y(mesh.dimension.fromFunction(function(x) { return x; }, 3));
   test.same(g(data), [
     [
       {'d0': {'a': 0, 'b': 0.5}, 'd1': {'a': 0, 'b': 1/3}, 'data': 'a'},

@@ -37,10 +37,8 @@ var rowsCount = data.length,
     colsCount = data[0].length;
 
 var mesh = d3_mesh.mesh()
-    .dims([
-      d3_mesh.dimension([0, 0.25, 0.5, 0.75, 1]).domain([0, height]),
-      d3_mesh.dimension([0, 0.3, 1]).domain([0, width])
-    ]);
+      .x(d3_mesh.dimension([0, 0.25, 0.5, 0.75, 1]).domain([0, height]))
+      .y(d3_mesh.dimension([0, 0.3, 1]).domain([0, width]));
 
 var rows = table.selectAll(".row")
     .data(mesh(data))
