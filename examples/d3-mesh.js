@@ -6,10 +6,7 @@
 
   function Cell(nodes, data) {
     for (var i in nodes) {
-      var n = nodes[i];
-      if (n != undefined && n != null) {
-        this['d' + i] = n;
-      }
+      this['d' + i] = nodes[i];
     }
     this['data'] = data;
   }
@@ -18,58 +15,64 @@
     constructor: Cell
   };
 
-  function dimension(nodes, divs) {
+  function dim(nodes) {
     var dimension = {},
         domain = [0, 1];
-
-    dimension.nodes = nodes;
-    if (Array.isArray(nodes)) {
-      dimension.divs = nodes.length - 1;
-    } else if (typeof nodes == "function" && divs != undefined) {
-      dimension.divs = divs;
-      compute();
-    } else {
-      throw "Bad arguments";
-    }
-    normalize();
-
-    function compute() {
-       var temp = new Array(dimension.divs + 1);
-       for (var i=0; i < temp.length; ++i) { temp[i] = dimension.nodes(i / dimension.divs); };
-       dimension.nodes = temp;
-    };
-
-    function normalize() {
-      var max = Math.max.apply(null, dimension.nodes);
-      for (var i in dimension.nodes) { dimension.nodes[i] /= max; };
-    };
-
-    function expand() {
-      var domainLength = domain[1] - domain[0];
-      var expander = function(x) { return domain[0] + x * domainLength };
-      for (var i in dimension.nodes) { dimension.nodes[i] = expander(dimension.nodes[i]); };
-    }
 
     dimension.domain = function(_) {
       return arguments.length ? (
         domain = _,
-        expand(),
         dimension
       ) : domain;
+    };
+
+    dimension.nodes = function(_) {
+      return arguments.length ? (
+        dimension
+      ) : nodes;
+    }
+
+    dimension.expand = function() {
+      var domainLength = domain[1] - domain[0],
+          min = Math.min.apply(Number.MAX_VALUE, nodes),
+          max = Math.max.apply(null, nodes),
+          diff = max - min;
+
+      return nodes.map(function(n) {
+        return domain[0] + (n - min) / diff * domainLength;
+      })
     };
 
     return dimension;
   }
 
+  dim.fromFunction = function(fun, divs) {
+    var nodes = new Array(divs + 1);
+    for (var i = 0; i < nodes.length; ++i) { nodes[i] = fun(i); };
+    return dim(nodes);
+  }
+
+  dim.fromSizes = function(sizes) {
+    var nodes = new Array(sizes.length + 1);
+    nodes[0] = 0;
+    for (var i = 0; i < sizes.length; ++i) { nodes[i + 1] = nodes[i] + sizes[i]; };
+    return dim(nodes);
+  }
+
+  dim.fromNodes = dim;
+
   function mesh() {
-    var dims = [];
+    var dims = [
+      dim.fromSizes([0, 2]),
+      dim.fromSizes([0, 2])
+    ];
 
-    //TODO: utils for irregular meshs (merged cells) - empty array cells? - map omits them
-
-    //NOTE: dimension animations can be handled by moving passing / shuffling data
-    //NOTE: data structure will always be the same / regular
+    //TODO: utils for irregular mesh (merged cells) - empty array cells? - map omits them
+    //NOTE: dimension animations can be handled by moving / passing / shuffling data
     //TODO: multiple getters: flat, grouped by each dimension
-    
+    //TODO: easier creation - interface with predefined regular mesh
+    //TODO: hardcode 2D dimension
+
     function mesh(data) {
       return _dig(data, [], dims.length);
     }
@@ -78,7 +81,7 @@
       if (nodes.length == depth) {
         return new Cell(nodes, data);
       } else {
-        var nextNodes = dims[nodes.length].nodes;
+        var nextNodes = dims[nodes.length].expand();
         return data.map(function(el, i) {
           return _dig(el, nodes.concat( {'a': nextNodes[i], 'b': nextNodes[i+1] } ), depth);
         });
@@ -96,7 +99,7 @@
   };
 
   exports.mesh = mesh;
-  exports.dimension = dimension;
+  exports.dimension = dim;
   exports.Cell = Cell;
 
 }));

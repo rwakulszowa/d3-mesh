@@ -8,8 +8,8 @@ tape("mesh binds data correctly", function(test) {
   ];
   var g = mesh.mesh()
       .dims([
-        mesh.dimension(function(x) { return x; }, 2),
-        mesh.dimension(function(x) { return x; }, 3)
+        mesh.dimension.fromFunction(function(x) { return x; }, 2),
+        mesh.dimension.fromFunction(function(x) { return x; }, 3)
       ]);
   test.same(g(data), [
     [
