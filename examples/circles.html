@@ -24,16 +24,17 @@ var color = d3.scale.linear()
     .range(["purple", "white"]);
 
 // Number of divisions per each dimension - feel free to increase the numbers
-var d1 = 24,  // circles
-    d2 = 2;  // cells per circle
+var d1 = 12,  // circles
+    d2 = 6;  // cells per circle
 
-var mesh = d3_mesh.mesh()
-      .x(d3_mesh.dimension
-        .fromFunction(function(x) { return Math.pow(x, 2); }, d1)
-        .domain([0, height / 2]))
-      .y(d3_mesh.dimension
-        .fromFunction(function(x) { return x; }, d2)
-        .domain([0, 2 * Math.PI]));  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
+var mesh = d3_mesh.mesh();
+mesh.x()
+  .domain([0, height / 2])
+  .shape([1, 4]);
+
+mesh.y()
+  .shape([1, 15])
+  .domain([0, 2 * Math.PI]);  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
 
 function arcCell(radius, angle) {
     var arc = d3.svg.arc()
@@ -49,16 +50,15 @@ for (var i=0; i < d1; ++i) {
     var row = [];
     for (var j = 0; j < d2; ++j) {
       row.push(
-        (i / j) | 0  // a fancy function returning asymmetric color distribution
-        // (i + j) % 2  // use this one for a classic chessboard
+        // (i / j) | 0  // a fancy function returning asymmetric color distribution
+        (i + j) % 2  // use this one for a classic chessboard
       )
     }
     data.push(row);
 }
 
-var cells = mesh(data);
 var circlesG = plot.selectAll(".circle")
-    .data(cells)
+    .data(mesh(data))
   .enter().append("g")
     .attr("class", "circle")
     .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
@@ -67,7 +67,7 @@ var cellsG = circlesG.selectAll(".cell")
     .data(function(d) { return d; })
   .enter().append("path")
     .attr("class", "cell")
-    .attr("d", function(d) { return arcCell(d.d0, d.d1); })
+    .attr("d", function(d) { return arcCell(d.x, d.y); })
     .style("fill", function(d) { return color(d.data); })
     .style("stroke", function(d) { return color(d.data); });
 
