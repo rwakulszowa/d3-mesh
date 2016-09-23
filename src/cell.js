@@ -1,7 +1,10 @@
-export default function Cell(nodes, data) {
+export default function Cell(nodes, data, dims) {
+  dims = dims || "xyz";
+
   for (var i in nodes) {
-    this['d' + i] = nodes[i];
+    this[dims[i]] = nodes[i];
   }
+  
   this['data'] = data;
 }
 

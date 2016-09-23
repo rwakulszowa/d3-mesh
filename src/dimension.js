@@ -1,6 +1,6 @@
 function dim() {
   var domain = [0, 1],
-      shape = [1];
+      shape = [1, 1, 1, 1];
 
   // Public - divide dimension into divs elements
   //
@@ -8,11 +8,13 @@ function dim() {
   //
   // Returns an array of boundary points
   function dimension(divs) {
-    return coverDomain(
-      sizesToNodes(
-        expand(shape, divs)
+    return nodesToRanges(
+      coverDomain(
+        sizesToNodes(
+          expand(shape, divs)
+        )
       )
-    );
+    )
   }
 
   // Private - expand the shape to divs length
@@ -52,7 +54,7 @@ function dim() {
       }
     }
 
-    function push(arr, el) {
+    function push(arr, el) {  //TODO: use concat instead
       arr.push(el);
       return arr;
     }
@@ -78,6 +80,27 @@ function dim() {
     return nodes.map(function(n) {
       return domain[0] + domainLength * (n - min) / diff;
     })
+  }
+
+  // Private - convert nodes to ranges
+  //
+  // nodes - an array of nodes
+  //
+  // Returns an array of nodes.length +1 objects {'a':..., 'b': ...}
+  function nodesToRanges(nodes) {
+
+    function build(nodes, ranges) {
+      if (nodes.length <= 1) {
+        return ranges;
+      } else {
+        return build(
+          nodes.slice(1, nodes.length),
+          ranges.concat({ 'a': nodes[0], 'b': nodes[1] })
+        )
+      }
+    }
+
+    return build(nodes, []);
   }
 
   // Public - set or get domain attribute
