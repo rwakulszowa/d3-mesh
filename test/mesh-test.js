@@ -3,10 +3,10 @@ var tape = require("tape"),
 
 tape("mesh binds data correctly", function(test) {
   var data = [
-    ['a', 'b'],  //TODO: use 2x2 instead
+    ['a', 'b'],
     ['c', 'd']
   ];
-  var g = mesh.mesh();  //TODO
+  var g = mesh.mesh();
 
   test.same(g(data), [
     [

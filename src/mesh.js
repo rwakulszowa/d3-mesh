@@ -9,6 +9,11 @@ function mesh() {
   //NOTE: dimension animations can be handled by moving / passing / shuffling data
   //TODO: allow other forms of digging - flatten cells, wrap all rows in Cell, swap x/y...
 
+  // Public - create a mesh bound with data
+  //
+  // data - 2D array of data to be bound
+  //
+  // Returns a 2D array of Cells
   function mesh(data) {
 
     function dig(data, dims, nodes) {
@@ -16,7 +21,6 @@ function mesh() {
         return new Cell(nodes, data);
       } else {
         var nodes_ = dims[0](data.length);
-        console.log(nodes_, data);
         return data.map(function(d, i) {
           return dig(
             d,
@@ -30,6 +34,11 @@ function mesh() {
     return dig(data, [x, y], []);
   }
 
+  // Public - set or get x attribute
+  //
+  // _ - new x value (optional)
+  //
+  // Returns dimension or mesh
   mesh.x = function(_) {
     return arguments.length ? (
       x = _,
@@ -37,6 +46,11 @@ function mesh() {
     ) : x;
   };
 
+  // Public - set or get y attribute
+  //
+  // _ - new y value (optional)
+  //
+  // Returns dimension or mesh
   mesh.y = function(_) {
     return arguments.length ? (
       y = _,

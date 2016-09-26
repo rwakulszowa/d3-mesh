@@ -4,13 +4,20 @@
   (factory((global.d3_mesh = global.d3_mesh || {})));
 }(this, function (exports) { 'use strict';
 
+  // Public - set create a new Cell
+  //
+  // nodes - array of start- and endpoints for each dimension
+  // data - value to be bound to a cell
+  // dims - list of dimension names (default: "xyz")
+  //
+  // Returns dimension or mesh
   function Cell(nodes, data, dims) {
     dims = dims || "xyz";
 
     for (var i in nodes) {
       this[dims[i]] = nodes[i];
     }
-    
+
     this['data'] = data;
   }
 
@@ -158,21 +165,24 @@
     //NOTE: dimension animations can be handled by moving / passing / shuffling data
     //TODO: allow other forms of digging - flatten cells, wrap all rows in Cell, swap x/y...
 
+    // Public - create a mesh bound with data
+    //
+    // data - 2D array of data to be bound
+    //
+    // Returns a 2D array of Cells
     function mesh(data) {
 
       function dig(data, dims, nodes) {
         if (dims.length == 0) {
           return new Cell(nodes, data);
         } else {
-          // var nextNodes = [x, y][nodes.length](data);
-          // return data.map(function(el, i) {
-          //   return _dig(el, nodes.concat( {'a': nextNodes[i], 'b': nextNodes[i+1] } ), depth);
-          // });
-          // console.log(data);
           var nodes_ = dims[0](data.length);
-          console.log(nodes_, data);
           return data.map(function(d, i) {
-            return dig(d, dims.slice(1, dims.length), nodes.concat(nodes_[i]));
+            return dig(
+              d,
+              dims.slice(1, dims.length),
+              nodes.concat(nodes_[i])
+            );
           })
         }
       }
@@ -180,6 +190,11 @@
       return dig(data, [x, y], []);
     }
 
+    // Public - set or get x attribute
+    //
+    // _ - new x value (optional)
+    //
+    // Returns dimension or mesh
     mesh.x = function(_) {
       return arguments.length ? (
         x = _,
@@ -187,6 +202,11 @@
       ) : x;
     };
 
+    // Public - set or get y attribute
+    //
+    // _ - new y value (optional)
+    //
+    // Returns dimension or mesh
     mesh.y = function(_) {
       return arguments.length ? (
         y = _,
