@@ -1,6 +1,6 @@
 function dim() {
   var domain = [0, 1],
-      shape = [1, 1, 1, 1];
+      shape = function(x) { return 1; };
 
   // Public - divide dimension into divs elements
   //
@@ -10,19 +10,34 @@ function dim() {
   function dimension(divs) {
     return nodesToRanges(
       coverDomain(
-        sizesToNodes(
-          expand(shape, divs)
+        shapeToNodes(
+          makeNodes(divs)
         )
       )
     )
   }
 
-  // Private - expand the shape to divs length
+  // Private - convert shape variable to an array
+  //
+  // len - desired length
+  //
+  // Returns an array of len numbers
+  function makeNodes(len) {
+    if (Array.isArray(shape)) {
+      return expand(shape, len);
+    } else if (typeof shape == "function") {
+      return Array.apply(null, Array(len)).map(shape);
+    } else {
+      throw("shape must be an Array or a function")
+    }
+  }
+
+  // Private - expand the shape to len length
   //
   // blueprint - an array to expand
   // len - desired length
   //
-  // Returns a divs-element array of numbers
+  // Returns a len-element array of numbers
   function expand(blueprint, len) {
     if (blueprint.length == 0) {
       throw("empty blueprint");
@@ -39,18 +54,18 @@ function dim() {
     return repeat([]);
   }
 
-  // Private - convert sizes to nodes (compute prefix sum)
+  // Private - convert shape to nodes (compute prefix sum)
   //
-  // sizes - an array of widths of each division
+  // shape - an array of widths of each division
   //
-  // Returns an array of sizes.length + 1 nodes
-  function sizesToNodes(sizes) {
+  // Returns an array of shape.length + 1 nodes
+  function shapeToNodes(shape) {
 
-    function nextNode(nodes, sizes) {
-      if (sizes.length == 0) {
+    function nextNode(nodes, shape) {
+      if (shape.length == 0) {
         return nodes;
       } else {
-        return nextNode(push(nodes, last(nodes) + sizes.shift()), sizes)
+        return nextNode(push(nodes, last(nodes) + shape.shift()), shape)
       }
     }
 
@@ -63,7 +78,7 @@ function dim() {
       return arr[arr.length - 1];
     }
 
-    return nextNode([0], sizes);
+    return nextNode([0], shape);
   }
 
   // Private - transform nodes to cover domain

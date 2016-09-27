@@ -39,9 +39,7 @@ var rowsCount = data.length,
 var mesh = d3_mesh.mesh();
 mesh.x()
     .domain([0, height])
-    .shape(Array.apply(null, Array(rowsCount)).map(
-      function(a, i) { return i == 0 ? 1.5 : 1; }  // creates an array [1.5, 1, 1, 1...] to make the header row larger
-    ));
+    .shape(function(a, i) { return i == 0 ? 1.5 : 1; } );  // creates an array [1.5, 1, 1, 1...] to make the header row larger
 mesh.y()
     .domain([0, width])
     .shape([1, 2]);

@@ -22,6 +22,18 @@ tape("Dimension with a fancy shape works", function(test) {
   test.end();
 });
 
+tape("Dimension from a function works", function(test) {
+  var dim = mesh.dimension()
+      .shape(function(x, i) { return i + 1; } );
+  test.same(dim(4), [
+    {'a': 0, 'b': 1/10},
+    {'a': 1/10, 'b': 3/10},
+    {'a': 3/10, 'b': 6/10},
+    {'a': 6/10, 'b': 1}
+  ]);
+  test.end();
+});
+
 tape("Dimension domain() sets and gets", function(test) {
   var dim = mesh.dimension()
       .domain([0, 100]);
