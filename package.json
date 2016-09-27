@@ -1,11 +1,15 @@
 {
   "name": "d3-mesh",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Create a mesh of elements the d3 way",
   "keywords": [
     "d3", "mesh", "grid", "table"
   ],
   "license": "MIT",
+  "author": {
+   "name": "rwa kulszowa",
+   "url": "https://github.com/rwakulszowa"
+  },
   "main": "build/d3-mesh.js",
   "jsnext:main": "index",
   "homepage": "https://github.com/rwakulszowa/d3-mesh",
@@ -21,7 +25,7 @@
   },
   "devDependencies": {
     "json2module": "0.0",
-    "rollup": "0.25",
+    "rollup": "0.34",
     "tape": "4",
     "uglify-js": "2"
   }
