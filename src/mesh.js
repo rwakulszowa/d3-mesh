@@ -14,7 +14,8 @@ function mesh() {
   // data - 2D array of data to be bound
   //
   // Returns a 2D array of Cells
-  function mesh(data) {
+  function mesh(data, flatten) {
+    flatten = flatten || false;
 
     function dig(data, dims, nodes) {
       if (dims.length == 0) {
@@ -31,7 +32,8 @@ function mesh() {
       }
     }
 
-    return dig(data, [x, y], []);
+    var ans = dig(data, [x, y], []);
+    return flatten ? ans.reduce(function(p, c) { return p.concat(c); }, []) : ans;
   }
 
   // Public - set or get x attribute

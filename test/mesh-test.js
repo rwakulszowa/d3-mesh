@@ -6,9 +6,9 @@ tape("mesh binds data correctly", function(test) {
     ['a', 'b'],
     ['c', 'd']
   ];
-  var g = mesh.mesh();
+  var m = mesh.mesh();
 
-  test.same(g(data), [
+  test.same(m(data), [
     [
       {'x': {'a': 0, 'b': 0.5}, 'y': {'a': 0, 'b': 0.5}, 'data': 'a'},
       {'x': {'a': 0, 'b': 0.5}, 'y': {'a': 0.5, 'b': 1}, 'data': 'b'}
@@ -17,6 +17,22 @@ tape("mesh binds data correctly", function(test) {
       {'x': {'a': 0.5, 'b': 1}, 'y': {'a': 0, 'b': 0.5}, 'data': 'c'},
       {'x': {'a': 0.5, 'b': 1}, 'y': {'a': 0.5, 'b': 1}, 'data': 'd'}
     ]
+  ]);
+  test.end();
+});
+
+tape("mesh flattens result", function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', 'd']
+  ];
+  var m = mesh.mesh();
+
+  test.same(m(data, true), [
+    {'x': {'a': 0, 'b': 0.5}, 'y': {'a': 0, 'b': 0.5}, 'data': 'a'},
+    {'x': {'a': 0, 'b': 0.5}, 'y': {'a': 0.5, 'b': 1}, 'data': 'b'},
+    {'x': {'a': 0.5, 'b': 1}, 'y': {'a': 0, 'b': 0.5}, 'data': 'c'},
+    {'x': {'a': 0.5, 'b': 1}, 'y': {'a': 0.5, 'b': 1}, 'data': 'd'}
   ]);
   test.end();
 });
