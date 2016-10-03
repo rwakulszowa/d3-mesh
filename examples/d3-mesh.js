@@ -11,10 +11,10 @@
 //
 // Returns dimension or mesh
 function Cell(nodes, data) {
-  var dims = "xy";
 
   for (var i in nodes) {
-    this[dims[i]] = nodes[i];
+    var n = nodes[i];  // old node doesnt support for .. of .. :/
+    this[n.id] = n.val;
   }
 
   this['data'] = data;
@@ -32,7 +32,8 @@ Cell.prototype = {
 
 function dim() {
   var domain = [0, 1],
-      shape = function(x) { return 1; };
+      shape = function(x) { return 1; },
+      id = null;
 
   // Public - divide dimension into divs elements
   //
@@ -174,12 +175,24 @@ function dim() {
     ) : shape;
   };
 
+  // Public - set or get id attribute
+  //
+  // _ - new id value (optional)
+  //
+  // Returns id or dimension
+  dimension.id = function(_) {
+    return arguments.length ? (
+      id = _,
+      dimension
+    ) : id;
+  };
+
   return dimension;
 }
 
 function mesh() {
-  var x = dim(),
-      y = dim();
+  var x = dim().id("x"),
+      y = dim().id("y");
 
   //TODO: utils for irregular mesh (merged cells) - empty array cells? - map omits them
   //NOTE: dimension animations can be handled by moving / passing / shuffling data
@@ -197,7 +210,7 @@ function mesh() {
       if (dims.length == 0) {
         return new Cell(nodes, data);
       } else {
-        var nodes_ = dims[0](data.length);
+        var nodes_ = dims[0](data.length).map(function(n) { return { id: dims[0].id(), val: n }; } );
         return data.map(function(d, i) {
           return dig(
             d,
@@ -208,7 +221,7 @@ function mesh() {
       }
     }
 
-    var ans = dig(data, [x, y], []);
+    var ans = dig(data, [y, x], []);
     return flatten ? ans.reduce(function(p, c) { return p.concat(c); }, []) : ans;
   }
 

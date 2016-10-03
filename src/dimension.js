@@ -1,6 +1,7 @@
 function dim() {
   var domain = [0, 1],
-      shape = function(x) { return 1; };
+      shape = function(x) { return 1; },
+      id = null;
 
   // Public - divide dimension into divs elements
   //
@@ -140,6 +141,18 @@ function dim() {
       shape = _,
       dimension
     ) : shape;
+  };
+
+  // Public - set or get id attribute
+  //
+  // _ - new id value (optional)
+  //
+  // Returns id or dimension
+  dimension.id = function(_) {
+    return arguments.length ? (
+      id = _,
+      dimension
+    ) : id;
   };
 
   return dimension;

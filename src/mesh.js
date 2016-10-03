@@ -2,8 +2,8 @@ import Cell from "./cell";
 import dimension from "./dimension";
 
 function mesh() {
-  var x = dimension(),
-      y = dimension();
+  var x = dimension().id("x"),
+      y = dimension().id("y");
 
   //TODO: utils for irregular mesh (merged cells) - empty array cells? - map omits them
   //NOTE: dimension animations can be handled by moving / passing / shuffling data
@@ -21,7 +21,7 @@ function mesh() {
       if (dims.length == 0) {
         return new Cell(nodes, data);
       } else {
-        var nodes_ = dims[0](data.length);
+        var nodes_ = dims[0](data.length).map(function(n) { return { id: dims[0].id(), val: n }; } );
         return data.map(function(d, i) {
           return dig(
             d,
@@ -32,7 +32,7 @@ function mesh() {
       }
     }
 
-    var ans = dig(data, [x, y], []);
+    var ans = dig(data, [y, x], []);
     return flatten ? ans.reduce(function(p, c) { return p.concat(c); }, []) : ans;
   }
 

@@ -5,10 +5,10 @@
 //
 // Returns dimension or mesh
 export default function Cell(nodes, data) {
-  var dims = "xy";
 
   for (var i in nodes) {
-    this[dims[i]] = nodes[i];
+    var n = nodes[i];  // old node doesnt support for .. of .. :/
+    this[n.id] = n.val;
   }
 
   this['data'] = data;
