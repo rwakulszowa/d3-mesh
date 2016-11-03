@@ -3,9 +3,28 @@ var tape = require("tape"),
 
 tape("Cell constructor sets correct properties", function(test) {
   var c = new mesh.Cell([
-    { id: "x", val: {'a': 0, 'b': 1} },
-    { id: "y", val: {'a': 0.5, 'b': 1.5} }
+    {'a': 0, 'b': 0.5},
+    {'a': 0.5, 'b': 1}
   ], 'abc');
-  test.same(c, {'x': {'a': 0, 'b': 1}, 'y': {'a': 0.5, 'b':1.5}, 'data': 'abc'});
+  test.same(
+      c,
+      { 
+          'x': { 'a': 0, 'b': 0.5 },
+          'y': { 'a': 0.5, 'b':1 },
+          'data': 'abc'
+      }
+  );
+  test.end();
+});
+
+tape("Cell computes shape properly", function(test) {
+  var c = new mesh.Cell([
+    {'a': 0, 'b': 0.5},
+    {'a': 0.5, 'b': 1}
+  ], 'abc');
+  test.same(
+      c.shape(),
+      { x: 0.5, y: 0.5 }
+  );
   test.end();
 });
