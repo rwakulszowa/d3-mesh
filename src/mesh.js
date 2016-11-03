@@ -4,38 +4,31 @@ import dimension from "./dimension";
 function mesh() {
   var x = dimension().id("x"),
       y = dimension().id("y"),
+      size = { x: 1, y: 0 },
       data = [[]];
 
   //TODO: appendRow/Col
   //TODO: a fancy .get(indices) that appends when out of bounds
+  //TODO: fix indentation (damn vim :/)
 
-  // Public - create a mesh bound with data
-  //
-  // data - 2D array of data to be bound
+  // Public - map data to a 2D array of cells
   //
   // Returns a 2D array of Cells
-  // TODO: rewrite this to use .data
-  function mesh(data, flatten) {
-    flatten = flatten || false;
+  var mesh = function() {
+      var xs = x(size.x),
+          ys = y(size.y);
 
-    function dig(data, dims, nodes) {
-      if (dims.length == 0) {
-        return new Cell(nodes, data);
-      } else {
-        var nodes_ = dims[0](data.length).map(function(n) { return { id: dims[0].id(), val: n }; } );
-        return data.map(function(d, i) {
-          return dig(
-            d,
-            dims.slice(1, dims.length),
-            nodes.concat(nodes_[i])
+      function mapColumn(col, i) {
+          return col.map(
+              function(data, j) {
+                  return new Cell([xs[i], ys[j]], data);
+              }
           );
-        })
       }
-    }
 
-    var ans = dig(data, [y, x], []);
-    return flatten ? ans.reduce(function(p, c) { return p.concat(c); }, []) : ans;
+      return data.map(mapColumn);
   }
+
 
   // Public - set or get data
   // 
@@ -97,7 +90,8 @@ function mesh() {
         return col.concat(fill);
     }
 
-    var size = enclosingSize(arr);
+    size = enclosingSize(arr);
+
     return arr.map(
         function(col) { return fillColumn(col, size.y); }
     ); 
