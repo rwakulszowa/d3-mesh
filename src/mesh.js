@@ -4,8 +4,7 @@ import dimension from "./dimension";
 function mesh() {
   var x = dimension().id("x"),
       y = dimension().id("y"),
-      size = { x: 1, y: 1 },
-      matrix = [[null]];
+      data = [[]];
 
   //TODO: appendRow/Col
   //TODO: a fancy .get(indices) that appends when out of bounds
@@ -15,7 +14,8 @@ function mesh() {
   // data - 2D array of data to be bound
   //
   // Returns a 2D array of Cells
-  function mesh(data, flatten) {  //rename this to data, call some private method internally
+  // TODO: rewrite this to use .data
+  function mesh(data, flatten) {
     flatten = flatten || false;
 
     function dig(data, dims, nodes) {
@@ -36,6 +36,20 @@ function mesh() {
     var ans = dig(data, [y, x], []);
     return flatten ? ans.reduce(function(p, c) { return p.concat(c); }, []) : ans;
   }
+
+  // Public - set or get data
+  // 
+  // _ - new data (optional)
+  //
+  // Returns dimension or mesh
+  //
+  // Note: setter may store a modified value
+  mesh.data = function(_) {
+    return arguments.length ? (
+      data = enclose(_),
+      mesh
+    ) : data;
+  };
 
   // Public - set or get x attribute
   //
@@ -61,14 +75,32 @@ function mesh() {
     ) : y;
   };
 
-  // Private - get size of the bounding array
-  function size(arr) {
+  // Private - get size of the enclosing array
+  function enclosingSize(arr) {
     var x = arr.length;
     var y = Math.max.apply(
         0,
         arr.map(function(col) { return col.length; } )
     );
     return { x: x, y: y };
+  }
+
+  //Private - build an enclosing array from data
+  //
+  // arr - a 2D array (an array of columns)
+  //
+  // Returns a new 2d array
+  function enclose(arr) {
+    
+    function fillColumn(col, targetLen) {
+        var fill = new Array(targetLen - col.length).fill(null);
+        return col.concat(fill);
+    }
+
+    var size = enclosingSize(arr);
+    return arr.map(
+        function(col) { return fillColumn(col, size.y); }
+    ); 
   }
 
   return mesh;
