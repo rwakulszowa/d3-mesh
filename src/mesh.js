@@ -3,18 +3,19 @@ import dimension from "./dimension";
 
 function mesh() {
   var x = dimension().id("x"),
-      y = dimension().id("y");
+      y = dimension().id("y"),
+      size = { x: 1, y: 1 },
+      matrix = [[null]];
 
-  //TODO: utils for irregular mesh (merged cells) - empty array cells? - map omits them
-  //NOTE: dimension animations can be handled by moving / passing / shuffling data
-  //TODO: allow other forms of digging - flatten cells, wrap all rows in Cell, swap x/y...
+  //TODO: appendRow/Col
+  //TODO: a fancy .get(indices) that appends when out of bounds
 
   // Public - create a mesh bound with data
   //
   // data - 2D array of data to be bound
   //
   // Returns a 2D array of Cells
-  function mesh(data, flatten) {
+  function mesh(data, flatten) {  //rename this to data, call some private method internally
     flatten = flatten || false;
 
     function dig(data, dims, nodes) {
@@ -59,6 +60,16 @@ function mesh() {
       mesh
     ) : y;
   };
+
+  // Private - get size of the bounding array
+  function size(arr) {
+    var x = arr.length;
+    var y = Math.max.apply(
+        0,
+        arr.map(function(col) { return col.length; } )
+    );
+    return { x: x, y: y };
+  }
 
   return mesh;
 };
