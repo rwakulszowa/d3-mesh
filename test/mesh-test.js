@@ -45,6 +45,20 @@ tape("mesh size calculates correctly" , function(test) {
   test.end();
 });
 
+tape("mesh insertCol updates all properties" , function(test) {
+  var data = [
+    ['a', 'b']
+  ];
+  var m = mesh.mesh().data(data);
+  m.insertCol(['c', 'd'], 1);
+
+  test.same(
+      [m.size(), m.data(), m.pickXs(1)],
+      [{ x: 2, y: 2 }, [['a', 'b'], ['c', 'd']], { a: 0.5, b: 1 }]
+  );
+  test.end();
+});
+
 tape("mesh pickXs picks the right element" , function(test) {
   var data = [
     ['a', 'b'],

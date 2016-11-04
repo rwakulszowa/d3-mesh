@@ -10,7 +10,6 @@ function mesh() {
       ys = [],
       data = [[]];
 
-  //TODO: appendRow/Col
   //TODO: a fancy .get(indices) that appends when out of bounds
   //TODO: fix indentation (damn vim :/)
 
@@ -28,6 +27,30 @@ function mesh() {
       }
 
       return data.map(mapColumn);
+  }
+
+  // Public - insert a new column
+  // 
+  // colData - 1D array of length <= size.y
+  // colIndex - where to put the array (default: append to the end)
+  mesh.insertCol = function(colData, colIndex) {
+     var size = mesh.size();
+     colIndex = typeof colIndex == "undefined" ? size.x : colIndex;
+
+     if (colIndex > size.x || colData.length > size.y) {
+         throw "Weird insertion. Try the mesh.data() instead"
+     } else {
+         xs = x(size.x + 1);
+         colData = fillColumn(colData, size.y);
+
+         // Splice data - old value will be modified,
+         // we store the remainder here and concat them back
+         var remainder = data.splice(colIndex);
+         data.push(colData);
+         mesh.data(
+             data.concat(remainder)
+         );
+     }
   }
 
   // Public - get current size of mesh
@@ -110,17 +133,17 @@ function mesh() {
   //
   // Returns a new 2d array
   function enclose(arr, size) {
-    
-    function fillColumn(col, targetLen) {
-        var fill = new Array(targetLen - col.length).fill(null);
-        return col.concat(fill);
-    }
-
     return arr.map(
         function(col) { return fillColumn(col, size.y); }
     ); 
   }
-  
+
+  // Private - fill a column array with nulls
+  function fillColumn(col, targetLen) {
+      var fill = new Array(targetLen - col.length).fill(null);
+      return col.concat(fill);
+  }
+
   // Private - comopute all internal params to fit data
   //
   // arr - a 2D array
