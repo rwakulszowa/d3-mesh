@@ -2,29 +2,69 @@ var tape = require("tape"),
     mesh = require("../");
 
 tape("Cell constructor sets correct properties", function(test) {
-  var c = new mesh.Cell([
-    {'a': 0, 'b': 0.5},
-    {'a': 0.5, 'b': 1}
-  ], 'abc');
+  var m = mesh.mesh();
+  var indices = [1, 0];
+  var c = new mesh.Cell(m, indices);
+
   test.same(
       c,
-      { 
-          'x': { 'a': 0, 'b': 0.5 },
-          'y': { 'a': 0.5, 'b':1 },
-          'data': 'abc'
+      {
+          parent: m,
+          i: 1,
+          j: 0
       }
   );
   test.end();
 });
 
-tape("Cell computes shape properly", function(test) {
-  var c = new mesh.Cell([
-    {'a': 0, 'b': 0.5},
-    {'a': 0.5, 'b': 1}
-  ], 'abc');
+tape("Cell accesses x", function(test) {
+  var data = [['a', 'b'], ['c', 'd']];
+  var m = mesh.mesh().data(data);
+  var indices = [1, 0];
+  var c = new mesh.Cell(m, indices);
+
+  test.same(
+      c.x(),
+      { a: 0.5, b: 1}
+  );
+  test.end();
+});
+
+tape("Cell accesses y", function(test) {
+  var data = [['a', 'b'], ['c', 'd']];
+  var m = mesh.mesh().data(data);
+  var indices = [1, 0];
+  var c = new mesh.Cell(m, indices);
+
+  test.same(
+      c.y(),
+      { a: 0, b: 0.5 }
+  );
+  test.end();
+});
+
+tape("Cell accesses data", function(test) {
+  var data = [['a', 'b'], ['c', 'd']];
+  var m = mesh.mesh().data(data);
+  var indices = [1, 0];
+  var c = new mesh.Cell(m, indices);
+
+  test.same(
+      c.d(),
+      'c'
+  );
+  test.end();
+});
+
+tape("Cell computes shape", function(test) {
+  var data = [['a', 'b']];
+  var m = mesh.mesh().data(data);
+  var indices = [0, 1];
+  var c = new mesh.Cell(m, indices);
+
   test.same(
       c.shape(),
-      { x: 0.5, y: 0.5 }
+      { x: 1, y: 0.5 }
   );
   test.end();
 });

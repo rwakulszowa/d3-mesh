@@ -1,25 +1,34 @@
-// Public - set create a new Cell
+// Public - create a new Cell
 //
-// nodes - array of start- and endpoints for each dimension
-// data - value to be bound to a cell
+// parent TODO
+// indices 
 //
-// Returns dimension or mesh
-export default function Cell(nodes, data) {
-  var ids = "xy";
-
-  for (var i in nodes) {
-    this[ids[i]] = nodes[i];
-  }
-
-  this['data'] = data;
-}
-
-Cell.prototype = {
-  constructor: Cell,
-  shape: function() {
-    return {
-      "x": this.x.b - this.x.a,
-      "y": this.y.b - this.y.a
-    }
-  }
+// Returns a new Cell
+var Cell = function(parent, indices) {
+    this.parent = parent;
+    this.i = indices[0];
+    this.j = indices[1];
 };
+
+Cell.prototype.x = function() {
+    return this.parent.pickXs(this.i);
+};
+
+Cell.prototype.y = function() {
+    return this.parent.pickYs(this.j);
+};
+
+Cell.prototype.d = function() {
+    return this.parent.pickData(this.i, this.j);
+};
+
+Cell.prototype.shape = function() {
+    var x = this.x();
+    var y = this.y();
+    return {
+        x: x.b - x.a,
+        y: y.b - y.a
+    }
+};
+
+export default Cell;

@@ -15,21 +15,21 @@ tape("mesh sets and fills data correctly", function(test) {
   test.end();
 });
 
-tape("mesh... well, works (with default dims)" , function(test) {
+tape("mesh.matrix... well, works (with default dims)" , function(test) {
   var data = [
     ['a', 'b'],
     ['c', null]
   ];
   var m = mesh.mesh().data(data);
 
-  test.same(m(), [
+  test.same(m.matrix(), [
     [
-        { data: 'a', x: { a: 0, b: 0.5 }, y: { a: 0, b: 0.5 } },
-        { data: 'b', x: { a: 0, b: 0.5 }, y: { a: 0.5, b: 1 } },
+        { i: 0, j: 0, parent: m },
+        { i: 0, j: 1, parent: m }
     ],
     [
-        { data: 'c', x: { a: 0.5, b: 1 }, y: { a: 0, b: 0.5 } },
-        { data: null, x: { a: 0.5, b: 1 }, y: { a: 0.5, b: 1 } },
+        { i: 1, j: 0, parent: m },
+        { i: 1, j: 1, parent: m }
     ]
   ]);
   test.end();

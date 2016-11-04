@@ -2,6 +2,8 @@ import Cell from "./cell";
 import dimension from "./dimension";
 
 function mesh() {
+  var mesh = {};
+
   var x = dimension().id("x"),
       y = dimension().id("y"),
       xs = [{ 'a': 0, 'b': 1 }],
@@ -15,12 +17,12 @@ function mesh() {
   // Public - map data to a 2D array of cells
   //
   // Returns a 2D array of Cells
-  var mesh = function() {
+  mesh.matrix = function() {
 
       function mapColumn(col, i) {
           return col.map(
               function(data, j) {
-                  return new Cell([xs[i], ys[j]], data);
+                  return new Cell(mesh, [i, j]);
               }
           );
       }
