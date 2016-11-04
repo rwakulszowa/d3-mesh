@@ -57,3 +57,14 @@ tape("mesh pickYs picks the right element" , function(test) {
   test.end();
 });
 
+tape("mesh pickData picks the right element" , function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', null]
+  ];
+  var m = mesh.mesh().data(data);
+
+  test.same(m.pickData(1, 0), 'c' );
+  test.end();
+});
+

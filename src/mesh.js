@@ -38,6 +38,11 @@ function mesh() {
       return ys[index];
   }
 
+  // Public - pick data by indices
+  mesh.pickData = function(i, j) {
+      return data[i][j];
+  }
+
   // Public - set or get data
   // 
   // _ - new data (optional)
