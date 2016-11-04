@@ -4,7 +4,8 @@ import dimension from "./dimension";
 function mesh() {
   var x = dimension().id("x"),
       y = dimension().id("y"),
-      size = { x: 1, y: 0 },
+      xs = [{ 'a': 0, 'b': 1 }],
+      ys = [],
       data = [[]];
 
   //TODO: appendRow/Col
@@ -15,8 +16,6 @@ function mesh() {
   //
   // Returns a 2D array of Cells
   var mesh = function() {
-      var xs = x(size.x),
-          ys = y(size.y);
 
       function mapColumn(col, i) {
           return col.map(
@@ -39,7 +38,7 @@ function mesh() {
   // Note: setter may store a modified value
   mesh.data = function(_) {
     return arguments.length ? (
-      data = enclose(_),
+      recompute(_),
       mesh
     ) : data;
   };
@@ -78,23 +77,33 @@ function mesh() {
     return { x: x, y: y };
   }
 
-  //Private - build an enclosing array from data
+  // Private - build an enclosing array from data
   //
   // arr - a 2D array (an array of columns)
+  // size - an object { x: int, y: int }
   //
   // Returns a new 2d array
-  function enclose(arr) {
+  function enclose(arr, size) {
     
     function fillColumn(col, targetLen) {
         var fill = new Array(targetLen - col.length).fill(null);
         return col.concat(fill);
     }
 
-    size = enclosingSize(arr);
-
     return arr.map(
         function(col) { return fillColumn(col, size.y); }
     ); 
+  }
+  
+  // Private - comopute all internal params to fit data
+  //
+  // arr - a 2D array
+  function recompute(arr) {
+     var size = enclosingSize(arr);
+
+     data = enclose(arr, size);
+     xs = x(size.x);
+     ys = y(size.y);
   }
 
   return mesh;
