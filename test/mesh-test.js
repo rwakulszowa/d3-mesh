@@ -35,6 +35,16 @@ tape("mesh.matrix... well, works (with default dims)" , function(test) {
   test.end();
 });
 
+tape("mesh size calculates correctly" , function(test) {
+  var data = [
+    ['a', 'b']
+  ];
+  var m = mesh.mesh().data(data);
+
+  test.same(m.size(), { x: 1, y: 2 } );
+  test.end();
+});
+
 tape("mesh pickXs picks the right element" , function(test) {
   var data = [
     ['a', 'b'],

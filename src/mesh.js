@@ -30,6 +30,13 @@ function mesh() {
       return data.map(mapColumn);
   }
 
+  // Public - get current size of mesh
+  //
+  // Returns an object { x: int, y: int }
+  mesh.size = function() {
+    return { x: data.length, y: data[0].length };
+  } 
+  
   // Public - pick xs by index
   mesh.pickXs = function(index) {
       return xs[index];
@@ -84,6 +91,9 @@ function mesh() {
   };
 
   // Private - get size of the enclosing array
+  //
+  // Note: designed to be used with a non-normalized 2D array,
+  // where cols may differ in lengths
   function enclosingSize(arr) {
     var x = arr.length;
     var y = Math.max.apply(
