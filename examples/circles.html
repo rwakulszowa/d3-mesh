@@ -57,8 +57,11 @@ for (var i=0; i < d1; ++i) {
     data.push(row);
 }
 
+// Bind mesh with the generated data
+mesh.data(data);
+
 var circlesG = plot.selectAll(".circle")
-    .data(mesh(data))
+    .data(mesh.matrix())
   .enter().append("g")
     .attr("class", "circle")
     .attr("transform", function(d, i) { return "translate(" + width / 2 + "," + height / 2 + ")"; });
@@ -67,9 +70,9 @@ var cellsG = circlesG.selectAll(".cell")
     .data(function(d) { return d; })
   .enter().append("path")
     .attr("class", "cell")
-    .attr("d", function(d) { return arcCell(d.x, d.y); })
-    .style("fill", function(d) { return color(d.data); })
-    .style("stroke", function(d) { return color(d.data); });
+    .attr("d", function(d) { return arcCell(d.x(), d.y()); })
+    .style("fill", function(d) { return color(d.d()); })
+    .style("stroke", function(d) { return color(d.d()); });
 
 var duration = 9000;
 (function rotate() {

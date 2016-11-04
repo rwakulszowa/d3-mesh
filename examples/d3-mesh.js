@@ -1,33 +1,40 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.d3_mesh = global.d3_mesh || {})));
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (factory((global.d3_mesh = global.d3_mesh || {})));
 }(this, (function (exports) { 'use strict';
 
-// Public - set create a new Cell
+// Public - create a new Cell
 //
-// nodes - array of start- and endpoints for each dimension
-// data - value to be bound to a cell
+// parent TODO
+// indices 
 //
-// Returns dimension or mesh
-function Cell(nodes, data) {
+// Returns a new Cell
+var Cell = function(parent, indices) {
+    this.parent = parent;
+    this.i = indices[0];
+    this.j = indices[1];
+};
 
-  for (var i in nodes) {
-    var n = nodes[i];  // old node doesnt support for .. of .. :/
-    this[n.id] = n.val;
-  }
+Cell.prototype.x = function() {
+    return this.parent.pickXs(this.i);
+};
 
-  this['data'] = data;
-}
+Cell.prototype.y = function() {
+    return this.parent.pickYs(this.j);
+};
 
-Cell.prototype = {
-  constructor: Cell,
-  shape: function() {
+Cell.prototype.d = function() {
+    return this.parent.pickData(this.i, this.j);
+};
+
+Cell.prototype.shape = function() {
+    var x = this.x();
+    var y = this.y();
     return {
-      "x": this.x.b - this.x.a,
-      "y": this.y.b - this.y.a
+        x: x.b - x.a,
+        y: y.b - y.a
     }
-  }
 };
 
 function dim() {
@@ -191,39 +198,62 @@ function dim() {
 }
 
 function mesh() {
+  var mesh = {};
+
   var x = dim().id("x"),
-      y = dim().id("y");
+      y = dim().id("y"),
+      xs = [{ 'a': 0, 'b': 1 }],
+      ys = [],
+      data = [[]];
 
-  //TODO: utils for irregular mesh (merged cells) - empty array cells? - map omits them
-  //NOTE: dimension animations can be handled by moving / passing / shuffling data
-  //TODO: allow other forms of digging - flatten cells, wrap all rows in Cell, swap x/y...
+  //TODO: appendRow/Col
+  //TODO: a fancy .get(indices) that appends when out of bounds
+  //TODO: fix indentation (damn vim :/)
 
-  // Public - create a mesh bound with data
-  //
-  // data - 2D array of data to be bound
+  // Public - map data to a 2D array of cells
   //
   // Returns a 2D array of Cells
-  function mesh(data, flatten) {
-    flatten = flatten || false;
+  mesh.matrix = function() {
 
-    function dig(data, dims, nodes) {
-      if (dims.length == 0) {
-        return new Cell(nodes, data);
-      } else {
-        var nodes_ = dims[0](data.length).map(function(n) { return { id: dims[0].id(), val: n }; } );
-        return data.map(function(d, i) {
-          return dig(
-            d,
-            dims.slice(1, dims.length),
-            nodes.concat(nodes_[i])
+      function mapColumn(col, i) {
+          return col.map(
+              function(data, j) {
+                  return new Cell(mesh, [i, j]);
+              }
           );
-        })
       }
-    }
 
-    var ans = dig(data, [y, x], []);
-    return flatten ? ans.reduce(function(p, c) { return p.concat(c); }, []) : ans;
+      return data.map(mapColumn);
   }
+
+  // Public - pick xs by index
+  mesh.pickXs = function(index) {
+      return xs[index];
+  }
+
+  // Public - pick ys by index
+  mesh.pickYs = function(index) {
+      return ys[index];
+  }
+
+  // Public - pick data by indices
+  mesh.pickData = function(i, j) {
+      return data[i][j];
+  }
+
+  // Public - set or get data
+  // 
+  // _ - new data (optional)
+  //
+  // Returns dimension or mesh
+  //
+  // Note: setter may store a modified value
+  mesh.data = function(_) {
+    return arguments.length ? (
+      recompute(_),
+      mesh
+    ) : data;
+  };
 
   // Public - set or get x attribute
   //
@@ -248,6 +278,45 @@ function mesh() {
       mesh
     ) : y;
   };
+
+  // Private - get size of the enclosing array
+  function enclosingSize(arr) {
+    var x = arr.length;
+    var y = Math.max.apply(
+        0,
+        arr.map(function(col) { return col.length; } )
+    );
+    return { x: x, y: y };
+  }
+
+  // Private - build an enclosing array from data
+  //
+  // arr - a 2D array (an array of columns)
+  // size - an object { x: int, y: int }
+  //
+  // Returns a new 2d array
+  function enclose(arr, size) {
+    
+    function fillColumn(col, targetLen) {
+        var fill = new Array(targetLen - col.length).fill(null);
+        return col.concat(fill);
+    }
+
+    return arr.map(
+        function(col) { return fillColumn(col, size.y); }
+    ); 
+  }
+  
+  // Private - comopute all internal params to fit data
+  //
+  // arr - a 2D array
+  function recompute(arr) {
+     var size = enclosingSize(arr);
+
+     data = enclose(arr, size);
+     xs = x(size.x);
+     ys = y(size.y);
+  }
 
   return mesh;
 };
