@@ -35,3 +35,25 @@ tape("mesh... well, works (with default dims)" , function(test) {
   test.end();
 });
 
+tape("mesh pickXs picks the right element" , function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', null]
+  ];
+  var m = mesh.mesh().data(data);
+
+  test.same(m.pickXs(1), { a: 0.5, b: 1 } );
+  test.end();
+});
+
+tape("mesh pickYs picks the right element" , function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', null]
+  ];
+  var m = mesh.mesh().data(data);
+
+  test.same(m.pickYs(1), { a: 0.5, b: 1 } );
+  test.end();
+});
+

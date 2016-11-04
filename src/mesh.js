@@ -28,6 +28,15 @@ function mesh() {
       return data.map(mapColumn);
   }
 
+  // Public - pick xs by index
+  mesh.pickXs = function(index) {
+      return xs[index];
+  }
+
+  // Public - pick ys by index
+  mesh.pickYs = function(index) {
+      return ys[index];
+  }
 
   // Public - set or get data
   // 
