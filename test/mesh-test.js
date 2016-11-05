@@ -107,3 +107,33 @@ tape("mesh pickData picks the right element" , function(test) {
   test.end();
 });
 
+tape("mesh.pick picks the right element when indices within size" , function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', null]
+  ];
+  var m = mesh.mesh().data(data);
+  var c = m.pick(1, 0);
+
+  test.same(
+      [c.x(), c.y(), c.d()],
+      [{ a: 0.5, b: 1 }, { a: 0, b: 0.5 }, 'c']
+  );
+  test.end();
+});
+
+tape("mesh.pick inserts rows and cols when indices out of bounds" , function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', null]
+  ];
+  var m = mesh.mesh().data(data);
+  var c = m.pick(3, 4);
+
+  test.same(
+      [m.size(), c.x(), c.y(), c.d()],
+      [{ x: 4, y: 5 }, { a: 0.75, b: 1 }, { a: 0.8, b: 1 }, null]
+  );
+  test.end();
+});
+

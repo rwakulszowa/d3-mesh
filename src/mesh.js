@@ -10,7 +10,6 @@ function mesh() {
       ys = [],
       data = [[]];
 
-  //TODO: a fancy .get(indices) that appends when out of bounds
   //TODO: fix indentation (damn vim :/)
 
   // Public - map data to a 2D array of cells
@@ -27,6 +26,35 @@ function mesh() {
       }
 
       return data.map(mapColumn);
+  }
+
+  // Public - get a Cell by indices
+  //
+  // i - x index
+  // j - y index
+  //
+  // Returns a Cell
+  mesh.pick = function(i, j) {
+     var size = mesh.size();
+
+     if (i < size.x && j < size.y) {  //TODO: get rid of this
+        // (i, j) fit within size - just get the cell
+        return new Cell(mesh, [i, j]);
+     } else {
+        // out of bounds -> modify data to contain (i, j)
+
+        // insert rows first
+        for (var rowIndex = size.y; rowIndex <= j; ++rowIndex) {
+            mesh.insertRow([]);
+        }
+
+        // now columns
+        for (var colIndex = size.x; colIndex <= i; ++colIndex) {
+            mesh.insertCol([]);
+        }
+     }
+
+     return new Cell(mesh, [i, j]);
   }
 
   // Public - insert a new column
