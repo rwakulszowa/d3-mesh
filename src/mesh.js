@@ -42,14 +42,7 @@ function mesh() {
      } else {
          xs = x(size.x + 1);
          colData = fillArray(colData, size.y);
-
-         // Splice data - old value will be modified,
-         // we store the remainder here and concat them back
-         var remainder = data.splice(colIndex);
-         data.push(colData);
-         mesh.data(
-             data.concat(remainder)
-         );
+         data.splice(colIndex, 0, colData);
      }
   }
 
@@ -67,18 +60,13 @@ function mesh() {
          ys = y(size.y + 1);
          rowData = fillArray(rowData, size.x);
          
-         var newData = new Array(size.x);
-
-         // Splice each column of data, push a new element and concat back
+         // Insert an element into each column
          for (var i in data) {
              var col = data[i];
              var rowEl = rowData[i];
-             var remainder = col.splice(rowIndex);
-             col.push(rowEl);
-             newData[i] = col.concat(remainder);
+             col.splice(rowIndex, 0, rowEl);
          }
 
-         mesh.data(newData);
      }
   }
 
