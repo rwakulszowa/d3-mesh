@@ -28,6 +28,27 @@ function mesh() {
       return data.map(mapColumn);
   }
 
+  // Public - map data to a 1D array
+  //
+  // Returns a 1D array of size.x * size.y Cells
+  mesh.flat = function() {
+
+      function foldColumn(acc, col, i) {
+          var mappedCol =  col.map(
+              function(data, j) {
+                  return new Cell(mesh, [i, j]);
+              }
+          );
+
+          return acc.concat(mappedCol);
+      }
+
+      return data.reduce(
+          foldColumn,
+          []
+      );
+  }
+
   // Public - get a Cell by indices
   //
   // i - x index
@@ -37,7 +58,7 @@ function mesh() {
   mesh.pick = function(i, j) {
      var size = mesh.size();
 
-     if (i < size.x && j < size.y) {  //TODO: get rid of this
+     if (i < size.x && j < size.y) {
         // (i, j) fit within size - just get the cell
         return new Cell(mesh, [i, j]);
      } else {

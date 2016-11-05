@@ -35,6 +35,22 @@ tape("mesh.matrix... well, works (with default dims)" , function(test) {
   test.end();
 });
 
+tape("mesh.flat converts to 1D" , function(test) {
+  var data = [
+    ['a', 'b'],
+    ['c', null]
+  ];
+  var m = mesh.mesh().data(data);
+
+  test.same(m.flat(), [
+      { i: 0, j: 0, parent: m },
+      { i: 0, j: 1, parent: m },
+      { i: 1, j: 0, parent: m },
+      { i: 1, j: 1, parent: m }
+  ]);
+  test.end();
+});
+
 tape("mesh size calculates correctly" , function(test) {
   var data = [
     ['a', 'b']
