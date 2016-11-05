@@ -38,10 +38,10 @@ function mesh() {
      colIndex = typeof colIndex == "undefined" ? size.x : colIndex;
 
      if (colIndex > size.x || colData.length > size.y) {
-         throw "Weird insertion. Try the mesh.data() instead"
+         throw "Weird insertion. Try mesh.data() instead"
      } else {
          xs = x(size.x + 1);
-         colData = fillColumn(colData, size.y);
+         colData = fillArray(colData, size.y);
 
          // Splice data - old value will be modified,
          // we store the remainder here and concat them back
@@ -50,6 +50,35 @@ function mesh() {
          mesh.data(
              data.concat(remainder)
          );
+     }
+  }
+
+  // Public - insert a new row
+  // 
+  // rowData - 1D array of length <= size.x
+  // rowIndex - where to put the array (default: append to the end)
+  mesh.insertRow = function(rowData, rowIndex) {
+     var size = mesh.size();
+     rowIndex = typeof rowIndex == "undefined" ? size.y : rowIndex;
+
+     if (rowIndex > size.y || rowData.length > size.x) {
+         throw "Weird insertion. Try mesh.data() instead"
+     } else {
+         ys = y(size.y + 1);
+         rowData = fillArray(rowData, size.x);
+         
+         var newData = new Array(size.x);
+
+         // Splice each column of data, push a new element and concat back
+         for (var i in data) {
+             var col = data[i];
+             var rowEl = rowData[i];
+             var remainder = col.splice(rowIndex);
+             col.push(rowEl);
+             newData[i] = col.concat(remainder);
+         }
+
+         mesh.data(newData);
      }
   }
 
@@ -134,14 +163,14 @@ function mesh() {
   // Returns a new 2d array
   function enclose(arr, size) {
     return arr.map(
-        function(col) { return fillColumn(col, size.y); }
+        function(col) { return fillArray(col, size.y); }
     ); 
   }
 
-  // Private - fill a column array with nulls
-  function fillColumn(col, targetLen) {
-      var fill = new Array(targetLen - col.length).fill(null);
-      return col.concat(fill);
+  // Private - fill an array with nulls
+  function fillArray(arr, targetLen) {
+      var fill = new Array(targetLen - arr.length).fill(null);
+      return arr.concat(fill);
   }
 
   // Private - comopute all internal params to fit data

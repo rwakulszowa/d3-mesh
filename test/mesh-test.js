@@ -59,6 +59,21 @@ tape("mesh insertCol updates all properties" , function(test) {
   test.end();
 });
 
+tape("mesh insertRow updates all properties" , function(test) {
+  var data = [
+    ['a'],
+    ['c']
+  ];
+  var m = mesh.mesh().data(data);
+  m.insertRow(['b', 'd'], 1);
+
+  test.same(
+      [m.size(), m.data(), m.pickYs(1)],
+      [{ x: 2, y: 2 }, [['a', 'b'], ['c', 'd']], { a: 0.5, b: 1 }]
+  );
+  test.end();
+});
+
 tape("mesh pickXs picks the right element" , function(test) {
   var data = [
     ['a', 'b'],
