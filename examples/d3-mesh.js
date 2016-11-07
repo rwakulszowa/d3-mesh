@@ -206,8 +206,6 @@ function mesh() {
       ys = [],
       data = [[]];
 
-  //TODO: appendRow/Col
-  //TODO: a fancy .get(indices) that appends when out of bounds
   //TODO: fix indentation (damn vim :/)
 
   // Public - map data to a 2D array of cells
@@ -226,6 +224,104 @@ function mesh() {
       return data.map(mapColumn);
   }
 
+  // Public - map data to a 1D array
+  //
+  // Returns a 1D array of size.x * size.y Cells
+  mesh.flat = function() {
+
+      function foldColumn(acc, col, i) {
+          var mappedCol =  col.map(
+              function(data, j) {
+                  return new Cell(mesh, [i, j]);
+              }
+          );
+
+          return acc.concat(mappedCol);
+      }
+
+      return data.reduce(
+          foldColumn,
+          []
+      );
+  }
+
+  // Public - get a Cell by indices
+  //
+  // i - x index
+  // j - y index
+  //
+  // Returns a Cell
+  mesh.pick = function(i, j) {
+     var size = mesh.size();
+
+     if (i < size.x && j < size.y) {
+        // (i, j) fit within size - just get the cell
+        return new Cell(mesh, [i, j]);
+     } else {
+        // out of bounds -> modify data to contain (i, j)
+
+        // insert rows first
+        for (var rowIndex = size.y; rowIndex <= j; ++rowIndex) {
+            mesh.insertRow([]);
+        }
+
+        // now columns
+        for (var colIndex = size.x; colIndex <= i; ++colIndex) {
+            mesh.insertCol([]);
+        }
+     }
+
+     return new Cell(mesh, [i, j]);
+  }
+
+  // Public - insert a new column
+  // 
+  // colData - 1D array of length <= size.y
+  // colIndex - where to put the array (default: append to the end)
+  mesh.insertCol = function(colData, colIndex) {
+     var size = mesh.size();
+     colIndex = typeof colIndex == "undefined" ? size.x : colIndex;
+
+     if (colIndex > size.x || colData.length > size.y) {
+         throw "Weird insertion. Try mesh.data() instead"
+     } else {
+         xs = x(size.x + 1);
+         colData = fillArray(colData, size.y);
+         data.splice(colIndex, 0, colData);
+     }
+  }
+
+  // Public - insert a new row
+  // 
+  // rowData - 1D array of length <= size.x
+  // rowIndex - where to put the array (default: append to the end)
+  mesh.insertRow = function(rowData, rowIndex) {
+     var size = mesh.size();
+     rowIndex = typeof rowIndex == "undefined" ? size.y : rowIndex;
+
+     if (rowIndex > size.y || rowData.length > size.x) {
+         throw "Weird insertion. Try mesh.data() instead"
+     } else {
+         ys = y(size.y + 1);
+         rowData = fillArray(rowData, size.x);
+         
+         // Insert an element into each column
+         for (var i in data) {
+             var col = data[i];
+             var rowEl = rowData[i];
+             col.splice(rowIndex, 0, rowEl);
+         }
+
+     }
+  }
+
+  // Public - get current size of mesh
+  //
+  // Returns an object { x: int, y: int }
+  mesh.size = function() {
+    return { x: data.length, y: data[0].length };
+  } 
+  
   // Public - pick xs by index
   mesh.pickXs = function(index) {
       return xs[index];
@@ -280,6 +376,9 @@ function mesh() {
   };
 
   // Private - get size of the enclosing array
+  //
+  // Note: designed to be used with a non-normalized 2D array,
+  // where cols may differ in lengths
   function enclosingSize(arr) {
     var x = arr.length;
     var y = Math.max.apply(
@@ -296,17 +395,17 @@ function mesh() {
   //
   // Returns a new 2d array
   function enclose(arr, size) {
-    
-    function fillColumn(col, targetLen) {
-        var fill = new Array(targetLen - col.length).fill(null);
-        return col.concat(fill);
-    }
-
     return arr.map(
-        function(col) { return fillColumn(col, size.y); }
+        function(col) { return fillArray(col, size.y); }
     ); 
   }
-  
+
+  // Private - fill an array with nulls
+  function fillArray(arr, targetLen) {
+      var fill = new Array(targetLen - arr.length).fill(null);
+      return arr.concat(fill);
+  }
+
   // Private - comopute all internal params to fit data
   //
   // arr - a 2D array

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+</style>
+<body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="d3-mesh.js"></script>
+<script>
+
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+var plot = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// Feel free to change the color domain / range
+var color = d3.scale.linear()
+    .domain([0, 4])
+    .range(["cornsilk", "mediumvioletred"]);
+
+var mesh = d3_mesh.mesh();
+mesh.x()
+  .domain([0, height / 2]);
+
+mesh.y()
+  .domain([0, 2 * Math.PI]);  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
+                              // Up to you, tho.
+
+function arcCell(radius, angle) {  // TODO: make this O(n+k) instead of O(nk)
+    var arc = d3.svg.arc()
+        .innerRadius(radius.a)
+        .outerRadius(radius.b)
+        .startAngle(angle.a)
+        .endAngle(angle.b);
+    return arc();
+}
+
+function draw() {
+
+    var cells = plot.selectAll("path")
+        .data(mesh.flat());
+
+    // Literally any function will do
+    var f1 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) % Math.abs(mesh.size().x - cell.i)); };  // heart-ish
+    var f2 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) % cell.i); };  // spade-like shape
+    var f3 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) * cell.i); };  // some weird thingy
+        
+    cells
+      .enter().append("path")
+        .attr("class", "cell")
+        .attr("d", function(c) { return arcCell(c.x(), c.y()); });
+    
+    cells
+        .attr("d", function(c) { return arcCell(c.x(), c.y()); })
+        .style("fill", f1)
+        .style("stroke", f1);  // these two don't have to be the same
+
+    cells
+        .exit().remove();
+
+};
+
+(function redraw(i) {
+    mesh.insertRow([]);
+    mesh.insertRow([], 0);
+    mesh.insertCol([]);
+
+    draw();
+
+    var to = setTimeout(redraw, 100, ++i);
+    if (i % 25 == 0) {
+        mesh.data([[null]]);
+    }
+})(0);
+
+</script>
