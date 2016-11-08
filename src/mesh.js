@@ -97,6 +97,8 @@ function mesh() {
          colData = fillArray(colData, size.y);
          data.splice(colIndex, 0, colData);
      }
+
+     return mesh;
   }
 
   // Public - insert a new row
@@ -121,6 +123,8 @@ function mesh() {
          }
 
      }
+
+     return mesh;
   }
 
   // Public - get current size of mesh
