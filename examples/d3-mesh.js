@@ -6,8 +6,8 @@
 
 // Public - create a new Cell
 //
-// parent TODO
-// indices 
+// parent - the mesh containing this cell
+// indices - a 2-element array
 //
 // Returns a new Cell
 var Cell = function(parent, indices) {
