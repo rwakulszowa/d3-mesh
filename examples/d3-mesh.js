@@ -249,9 +249,11 @@ function mesh() {
   //
   // i - x index
   // j - y index
+  // d - data
   //
   // Returns a Cell
-  mesh.pick = function(i, j) {
+  mesh.pick = function(i, j, d) {
+     d = typeof d == "undefined" ? null : d;
      var size = mesh.size();
 
      if (i < size.x && j < size.y) {
@@ -271,6 +273,8 @@ function mesh() {
         }
      }
 
+     data[i][j] = d;
+
      return new Cell(mesh, [i, j]);
   }
 
@@ -289,6 +293,8 @@ function mesh() {
          colData = fillArray(colData, size.y);
          data.splice(colIndex, 0, colData);
      }
+
+     return mesh;
   }
 
   // Public - insert a new row
@@ -313,6 +319,8 @@ function mesh() {
          }
 
      }
+
+     return mesh;
   }
 
   // Public - get current size of mesh

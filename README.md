@@ -6,8 +6,8 @@ Create a mesh of SVG elements the d3 way
 
 If you use NPM, `npm install d3-mesh`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-mesh/releases/latest).
 If you are super lazy, I also keep the non-minified source in
-`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.2.0/examples/d3-mesh.js`
-which you can probably copy-paste into your script.
+`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.3.0/examples/d3-mesh.js`
+which you can probably include in your script.
 
 ## API Reference
 
@@ -15,28 +15,26 @@ which you can probably copy-paste into your script.
 
 Constructs a new mesh with default values.
 
-<a href="#mesh" name="mesh">#</a> <b>mesh</b>(data)
+<a href="#mesh_data" name="mesh_data" >#</a> <i>mesh</i>.<b>data</b>([<i>data</i>])
 
-Converts a 2-dimensional data array to an array of cell objects `{ 'data': data, 'x': { 'a': d0Start, 'b': d0End }, 'y': { 'a': d1Start, 'b': d1End } }`
-start and end values are calculated as specified in *d3_mesh*.**dimension**
+If *data* is specified, sets the mesh’s data parameter to *data*. The stored value may be modified so that each column (internal array) has equal length.
+If *data* is not specified, returns the mesh’s current data.
+The default value is ``[[null]]`` - a 1x0 matrix
+
 ```js
 var mesh = d3_mesh.mesh()
 
 var data = [
   ['a', 'b'],
-  ['c', 'd']
+  ['c']
 ];
 
-mesh(data);  /*
+mesh.data(data);
+
+mesh.data();  /*
 [
-  [
-    {'x': {'a': 0, 'b': 0.5}, 'y': {'a': 0, 'b': 0.5}, 'data': 'a'},
-    {'x': {'a': 0.5, 'b': 1}, 'y': {'a': 0, 'b': 0.5}, 'data': 'b'},
-  ],
-  [
-    {'x': {'a': 0, 'b': 0.5}, 'y': {'a': 0.5, 'b': 1}, 'data': 'c'},
-    {'x': {'a': 0.5, 'b': 1}, 'y': {'a': 0.5, 'b': 1}, 'data': 'd'},
-  ],
+    ['a', 'b'],
+    ['c', null]  // gap filled with a null
 ]
 */
 ```
@@ -52,6 +50,145 @@ The default value is ``d3_mesh.dimension()``
 If *y* is specified, sets the mesh’s y dimension to *y*
 If *y* is not specified, returns the mesh’s current y.
 The default value is ``d3_mesh.dimension()``
+
+<a href="#mesh_matrix" name="mesh_matrix">#</a> <b>matrix</b>()
+
+Maps **data** to a 2D array of Cells
+```js
+var mesh = d3_mesh.mesh()
+
+var data = [
+  ['a', 'b'],
+  ['c', 'd']
+];
+
+mesh.data(data);
+mesh.matrix();  /*
+[
+  [
+    { i: 0, j: 0, parent: mesh },
+    { i: 0, j: 1, parent: mesh },
+  ],
+  [
+    { i: 1, j: 0, parent: mesh },
+    { i: 1, j: 1, parent: mesh },
+  ],
+]
+*/
+```
+
+<a href="#mesh_flat" name="mesh_flat">#</a> <b>flat</b>()
+
+Maps **data** to a 1D array of Cells
+```js
+var mesh = d3_mesh.mesh()
+
+var data = [
+  ['a', 'b'],
+  ['c', 'd']
+];
+
+mesh.data(data);
+mesh.flat();  /*
+[
+  { i: 0, j: 0, parent: mesh },
+  { i: 0, j: 1, parent: mesh },
+  { i: 1, j: 0, parent: mesh },
+  { i: 1, j: 1, parent: mesh }
+]
+*/
+```
+
+<a href="#mesh_pick" name="mesh_pick">#</a> <b>pick</b>(<i>i</i>, <i>j</i>, [<i>d</i>])
+
+Returns a Cell residing at indices *i*, *j*. If either *i* or *j* exceed current size, mesh is expanded to contain indices *i*, *j*.
+If *d* is specified, data[*i*][*j*] will be set to *d*.
+```js
+var mesh = d3_mesh.mesh()
+
+var data = [
+  ['a']
+];
+
+mesh.data(data);
+mesh.pick(1, 1, 'd');
+mesh.data();  /*
+[
+    ['a', null],
+    [null, 'd']
+]
+*/
+```
+
+<a href="#mesh_insertRow" name="mesh_insertRow">#</a> <b>insertRow</b>(<i>rowData</i>, [<i>rowIndex</i>])
+
+Inserts a new row filled with *rowData* into mesh.
+If *rowIndex* is not specified, a new row will be appended at mesh.size().x
+```js
+var mesh = d3_mesh.mesh()
+
+var data = [
+  ['a'],
+  ['c']
+];
+
+mesh.data(data);
+mesh.insertRow(['b', 'd']);
+mesh.data();  /*
+[
+    ['a', 'b'],
+    ['c', 'd']
+]
+*/
+```
+
+<a href="#mesh_insertCol" name="mesh_insertCol">#</a> <b>insertCol</b>(<i>colData</i>, [<i>colIndex</i>])
+
+Inserts a new column filled with *colData* into mesh.
+If *colIndex* is not specified, a new column will be appended at mesh.size().y
+```js
+var mesh = d3_mesh.mesh()
+
+var data = [
+  ['a', 'b']
+];
+
+mesh.data(data);
+mesh.insertCol(['c', 'd']);
+mesh.data();  /*
+[
+    ['a', 'b'],
+    ['c', 'd']
+]
+*/
+```
+
+<a href="#mesh_pickXs" name="mesh_pickXs">#</a> <b>pickXs</b>(<i>index</i>)
+
+Pick *index*-th element of the x dimension
+
+<a href="#mesh_pickYs" name="mesh_pickYs">#</a> <b>pickYs</b>(<i>index</i>)
+
+Pick *index*-th element of the y dimension
+
+<a href="#mesh_pickData" name="mesh_pickData">#</a> <b>pickData</b>(<i>i</i>, <i>j</i>)
+
+Pick data[*i*][*j*]
+
+<a href="#mesh_size" name="mesh_size">#</a> <b>size</b>()
+
+Returns the current size of the mesh
+```js
+var mesh = d3_mesh.mesh()
+
+var data = [
+  ['a', 'b'],
+  ['c', 'd']
+];
+
+mesh.data(data);
+mesh.size();  // { x: 2, y: 2 }
+```
 
 <a href="#mesh_dimension" name="mesh_dimension" >#</a> <i>d3_mesh</i>.<b>dimension</b>()
 
@@ -107,22 +244,50 @@ If *domain* is specified, sets the dimension’s domain to *domain*. *domain* mu
 If *domain* is not specified, returns the dimension’s current domain.
 The default value is ``[0, 1]``
 
-<a href="#mesh_cell" name="mesh_cell" >#</a> <i>d3_mesh</i>.<b>cell</b>(<i>nodes</i>, <i>data</i>)
+<a href="#mesh_cell" name="mesh_cell" >#</a> <i>d3_mesh</i>.<b>cell</b>(<i>parent</i>, <i>indices</i>)  // TODO
 
-Constructs a new Cell object. <i>nodes</i> must be a 2-element array, <i>data may be of any type</i>
+Constructs a new Cell object. *parent* must be a *d3_mesh*.**mesh** *indices* must be a 2-element array of natural numbers.
 NOTE: you dont need to build Cells by yourself, *d3_mesh*.**mesh** will handle it.
 
 ```js
-var mesh = d3_mesh.mesh()([ [ 'a', 'b' ], [ 'c', 'd' ] ]);  // returns a 2D array of cells
-mesh[0][0];  // { x: { a: 0, b: 0.5 }, y: { a: 0, b: 0.5 }, data: 'a' }  // a Cell object
+var mesh = d3_mesh
+    .mesh()
+    .data([ [ 'a', 'b' ], [ 'c', 'd' ] ])
+    .matrix();  // returns a 2D array of cells
+mesh[0][0];  // { i: 0, j: 0, parent: mesh }  // a Cell object
 ```
+
+<a href="#cell_x" name="cell_x" >#</a> <i>d3_mesh.cell</i>.<b>x</b>()
+
+Returns this Cell's span over the x dimension.
+```js
+var m = d3_mesh
+    .mesh()
+    .data([ [ 'a', 'b' ], [ 'c', 'd' ] ])
+    .matrix();
+m[0][0].x();  // { a: 0, b: 0.5 }
+```
+
+<a href="#cell_y" name="cell_y" >#</a> <i>d3_mesh.cell</i>.<b>y</b>()
+
+Returns this Cell's span over the y dimension.
+
+<a href="#cell_y" name="cell_y" >#</a> <i>d3_mesh.cell</i>.<b>y</b>()
+
+Returns data bound to this cell.
 
 <a href="#cell_shape" name="cell_shape" >#</a> <i>d3_mesh.cell</i>.<b>shape</b>()
 
 Returns an object of given cell's size in each dimension
 ```js
-var mesh = d3_mesh.mesh()([ [ 'a', 'b' ], [ 'c', 'd' ] ]);
-mesh[0][0].shape();  // { x: 0.5, y: 0.5 }
+var m = d3_mesh
+    .mesh()
+    .data([ [ 'a', 'b' ], [ 'c', 'd' ] ])
+    .matrix();
+m[0][0].shape();  // { x: 0.5, y: 0.5 }
 ```
+
 ## Examples
 * [A fancy circle](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/circles.html)
+* [Some cool shapes](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/shapes.html)
+* [Insertion sort visualization](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/insertion.html)
