@@ -144,11 +144,11 @@ tape("mesh.pick inserts rows and cols when indices out of bounds" , function(tes
     ['c', null]
   ];
   var m = mesh.mesh().data(data);
-  var c = m.pick(3, 4);
+  var c = m.pick(3, 4, 'x');
 
   test.same(
       [m.size(), c.x(), c.y(), c.d()],
-      [{ x: 4, y: 5 }, { a: 0.75, b: 1 }, { a: 0.8, b: 1 }, null]
+      [{ x: 4, y: 5 }, { a: 0.75, b: 1 }, { a: 0.8, b: 1 }, 'x']
   );
   test.end();
 });

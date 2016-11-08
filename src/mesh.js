@@ -53,9 +53,11 @@ function mesh() {
   //
   // i - x index
   // j - y index
+  // d - data
   //
   // Returns a Cell
-  mesh.pick = function(i, j) {
+  mesh.pick = function(i, j, d) {
+     d = typeof d == "undefined" ? null : d;
      var size = mesh.size();
 
      if (i < size.x && j < size.y) {
@@ -74,6 +76,8 @@ function mesh() {
             mesh.insertCol([]);
         }
      }
+
+     data[i][j] = d;
 
      return new Cell(mesh, [i, j]);
   }
