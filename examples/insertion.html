@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+.sorted .plot rect{
+    fill: teal
+}
+.unsorted .plot rect{
+    fill: peachpuff
+}
 </style>
 <body>
 <script src="https://d3js.org/d3.v4.js"></script>
@@ -25,14 +31,14 @@ mesh.x()
 mesh.y()
   .domain([0, height]);
 
-var data = new Array(10).fill(0).map(() => Math.random());
+var data = new Array(25).fill(0).map(() => Math.random());
 
 var xDomain = data.map(function(d, i) { return i; });
 
 // Start with two empty columns
 mesh.data([[], []]);
 
-function barPlot(selection, cell) {  //TODO: set size, redraw
+function barPlot(selection, cell) {
 
     var shape = cell.shape();
     var data = cell.d();
@@ -80,21 +86,25 @@ function sort(data) {
     }
 }
 
+function draw() {
+
+    var plot = container.selectAll("g")
+        .data(mesh.matrix())
+      .enter().append("g")
+        .attr("class", function(d, i) { return i == 0 ? "sorted" : "unsorted" })
+        .selectAll("plot")
+        .data(function(d) { return d; } )
+
+    plot
+      .enter().append("g")
+        .attr("class", "plot")
+        .attr("transform", function(d) { return "translate(" + d.x().a +"," + d.y().a + ")"; })
+        .each(function(d, i) {
+            barPlot(d3.select(this), d)
+        });
+
+}
+
 sort(data);
-
-var plot = container.selectAll("g")
-    .data(mesh.matrix())
-  .enter().append("g")
-    .selectAll("plot")
-    .data(function(d) { return d; } );
-
-plot
-  .enter().append("g")
-    .attr("class", "plot")
-    .attr("transform", function(d) { return "translate(" + d.x().a +"," + d.y().a + ")"; })
-    .each(function(d, i) {
-        barPlot(d3.select(this), d)
-    });
-
-
+draw();
 </script>
