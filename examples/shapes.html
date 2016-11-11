@@ -15,24 +15,39 @@ var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
 
-var plot = svg.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+// "defs" element lets you define elements without actually drawing them
+var basis = svg.append("defs")
   .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    .attr("id", "basis")
+    .attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")")
+  .append("g");
 
 // Feel free to change the color domain / range
 var color = d3.scale.linear()
     .domain([0, 4])
     .range(["cornsilk", "mediumvioletred"]);
 
+// How many replicas of the basis will be drawn
+var segmentCount = 5;
+
 var mesh = d3_mesh.mesh();
 mesh.x()
   .domain([0, height / 2]);
-
 mesh.y()
-  .domain([0, 2 * Math.PI]);  // If you want a full circle, make sure domain covers range [0, 2 * Pi], (or equivalent)
-                              // Up to you, tho.
+  .domain([0, 2 / segmentCount * Math.PI]);
 
+// Draw and transform actual segments
+for (var i = 0; i < segmentCount; ++i) {
+    svg.append("use")
+        .attr("xlink:href", "#basis")
+        .attr("transform", "rotate(" +
+                i * 360 / segmentCount + ","  +
+                (width / 2 + margin.left) + "," + 
+                (height / 2 + margin.top) + ")");
+}
+
+
+// A helper function for drawing arccells (there's no such word; I mean those little elements of a circle)
 function arcCell(radius, angle) {  // TODO: make this O(n+k) instead of O(nk)
     var arc = d3.svg.arc()
         .innerRadius(radius.a)
@@ -42,15 +57,16 @@ function arcCell(radius, angle) {  // TODO: make this O(n+k) instead of O(nk)
     return arc();
 }
 
-function draw() {
+function update() {
 
-    var cells = plot.selectAll("path")
+    var cells = basis.selectAll("path")
         .data(mesh.flat());
 
     // Literally any function will do
     var f1 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) % Math.abs(mesh.size().x - cell.i)); };  // heart-ish
     var f2 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) % cell.i); };  // spade-like shape
-    var f3 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) * cell.i); };  // some weird thingy
+    var f3 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j + 8) % cell.i); };  // adding a constant gives a delay of sorts
+    var f4 = function(cell) { return color(Math.abs(mesh.size().y / 2 - cell.j) * cell.i); };  // some weird thingy
         
     cells
       .enter().append("path")
@@ -60,7 +76,7 @@ function draw() {
     cells
         .attr("d", function(c) { return arcCell(c.x(), c.y()); })
         .style("fill", f1)
-        .style("stroke", f1);  // these two don't have to be the same
+        .style("stroke", f2);  // these two don't have to be the same
 
     cells
         .exit().remove();
@@ -72,10 +88,10 @@ function draw() {
     mesh.insertRow([], 0);
     mesh.insertCol([]);
 
-    draw();
+    update();
 
     var to = setTimeout(redraw, 100, ++i);
-    if (i % 25 == 0) {
+    if (i % 25 == 0) {  // it will get fancier if you increase the number, but your pc may hate you :/
         mesh.data([[null]]);
     }
 })(0);
