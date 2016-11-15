@@ -2,11 +2,24 @@
 
 Create a mesh of SVG elements the d3 way
 
+## Description
+
+The main goal of this module is to provide an easy way to split an area into regularly shaped pieces. You can divide an svg container into smaller ones, an svg circle into rings or a HTML div into a table-like structure (or an actual table, because why not).
+d3-mesh only handles the computation of desired dimensions - it doesn't actually manipulate the DOM, but it provides lots of utilities to make it fancy, while d3 makes the actual creation easy.
+
+But what's the point of using a library to convert an SVG element into some weird array? There's problably none. You should rethink your life. Or, if you actually know some useful application of it, please let me know and I'll rethink mine.
+
+## Examples
+
+* [A fancy circle](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/circles.html)
+* [Some cool shapes](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/shapes.html)
+* [Insertion sort visualization](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/insertion.html)
+
 ## Installing
 
 If you use NPM, `npm install d3-mesh`. Otherwise, download the [latest release](https://github.com/rwakulszowa/d3-mesh/releases/latest).
 If you are super lazy, I also keep the non-minified source in
-`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.3.0/examples/d3-mesh.js`
+`https://raw.githubusercontent.com/rwakulszowa/d3-mesh/v0.3.1/examples/d3-mesh.js`
 which you can probably include in your script.
 
 ## API Reference
@@ -286,8 +299,3 @@ var m = d3_mesh
     .matrix();
 m[0][0].shape();  // { x: 0.5, y: 0.5 }
 ```
-
-## Examples
-* [A fancy circle](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/circles.html)
-* [Some cool shapes](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/shapes.html)
-* [Insertion sort visualization](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/insertion.html)

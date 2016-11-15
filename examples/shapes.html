@@ -30,7 +30,7 @@ var color = d3.scale.linear()
 // How many replicas of the basis will be drawn
 var segmentCount = 5;
 
-var mesh = d3_mesh.mesh();
+var mesh = d3.mesh();
 mesh.x()
   .domain([0, height / 2]);
 mesh.y()
@@ -48,7 +48,7 @@ for (var i = 0; i < segmentCount; ++i) {
 
 
 // A helper function for drawing arccells (there's no such word; I mean those little elements of a circle)
-function arcCell(radius, angle) {  // TODO: make this O(n+k) instead of O(nk)
+function arcCell(radius, angle) {
     var arc = d3.svg.arc()
         .innerRadius(radius.a)
         .outerRadius(radius.b)

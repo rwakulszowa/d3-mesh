@@ -24,7 +24,7 @@ var svg = d3.select("body").append("svg")
 var container = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var mesh = d3_mesh.mesh();
+var mesh = d3.mesh();
 mesh.x()
   .domain([0, width]);
 

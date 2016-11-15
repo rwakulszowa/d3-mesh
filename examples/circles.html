@@ -27,7 +27,7 @@ var color = d3.scale.linear()
 var d1 = 12,  // circles
     d2 = 6;  // cells per circle
 
-var mesh = d3_mesh.mesh();
+var mesh = d3.mesh();
 mesh.x()
   .domain([0, height / 2])
   .shape([1, 4]);
