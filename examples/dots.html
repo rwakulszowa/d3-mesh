@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.dot{
+    fill: black
+}
+</style>
+<body>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="d3-mesh.js"></script>
+<script>
+
+var width = 1000,
+    height = 600,
+    span = 25;
+
+var duration = 2000;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("transform", "translate(" + span / 2 + "," + span / 2 + ")");
+
+var mesh = d3.mesh();
+mesh.x()
+  .domain([0, width]);
+
+mesh.y()
+  .domain([0, height]);
+
+var rows = Math.round(height / span);
+var cols = Math.round(width / span);
+
+var r = d3.scaleLinear()
+    .range([span / 8, span / 2]);
+
+//TODO: implement some fancy function generator
+var valueFunctions = [
+    (i, j) => (i + j) % 2 == 0 ? null : i + j,
+    (i, j) => (i + j) % 2 == 0 ? null : (cols - i) + (rows - j),
+    (i, j) => (i + j) % 2 == 0 ? null : i ^ j,
+    (i, j) => (i + j) % 2 == 0 ? null : i * j,
+    (i, j) => (i + j) % 2 == 0 ? null : (i + (cols - j)) % 5,
+    (i, j) => (i + j) % 2 == 0 ? null : (i + j) % 9,
+]
+
+function update() {
+    var randomIndex = Math.floor(Math.random() * valueFunctions.length);
+    var foo = valueFunctions[randomIndex];
+
+    var data = new Array(cols).fill(0).map(
+        (_, i) => new Array(rows).fill(0).map(
+            (_, j) => foo(i, j))
+    );
+
+    mesh.data(data);
+
+    r.domain([0, d3.max(data.map(
+        row => d3.max(row)))]);
+
+    var dots = svg.selectAll(".dot")
+        .data(mesh.flat().filter(d => d.d() != null));
+
+    dots
+      .enter().append("circle")
+        .attr("class", "dot")
+        .attr("transform", function(d) { return "translate(" + d.x().a +"," + d.y().a + ")"; })
+        .attr("r", d => r(d.d()));
+
+    dots
+      .transition()
+        .duration(duration)
+          .attr("r", d => r(d.d()));
+
+    dots
+      .exit().remove();
+}
+
+setInterval(update, duration);
+</script>

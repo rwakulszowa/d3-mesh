@@ -14,6 +14,7 @@ But what's the point of using a library to convert an SVG element into some weir
 * [A fancy circle](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/circles.html)
 * [Some cool shapes](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/shapes.html)
 * [Insertion sort visualization](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/insertion.html)
+* [Polka dots](https://rawgit.com/rwakulszowa/d3-mesh/master/examples/dots.html)
 
 ## Installing
 
